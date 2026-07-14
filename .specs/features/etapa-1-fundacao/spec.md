@@ -97,9 +97,9 @@ O app Eterniza ainda não existe como projeto de código — o workspace contém
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| FUND-01 | P1: Projeto Expo executável | Execute | Pending |
-| FUND-02 | P1: Design tokens em código | Execute | Pending |
-| FUND-03 | P1: Fontes + tela placeholder | Execute | Pending |
+| FUND-01 | P1: Projeto Expo executável | Execute | Verified (UAT pendente) — commit 18eb9f3 |
+| FUND-02 | P1: Design tokens em código | Execute | Verified — commit 6acc87a |
+| FUND-03 | P1: Fontes + tela placeholder | Execute | Verified (UAT pendente) — commit 9309e07 |
 
 **Coverage:** 3 total, 0 mapped to tasks (tasks implícitas no Execute — escopo Medium), 0 unmapped.
 
@@ -107,6 +107,6 @@ O app Eterniza ainda não existe como projeto de código — o workspace contém
 
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002)
 
-- [ ] **App abre no Expo Go com a tela estilizada e as duas fontes visíveis** — verificado por UAT interativo com o usuário (AD-003).
-- [ ] Gate automatizado verde: `tsc --noEmit` + teste de tokens.
-- [ ] Um commit atômico fechando a etapa (AD-005).
+- [ ] **App abre no Expo Go com a tela estilizada e as duas fontes visíveis** — verificado por UAT interativo com o usuário (AD-003). ⏳ pendente
+- [x] Gate automatizado verde: `tsc --noEmit` + lint + 4/4 testes de tokens (Verifier PASS, sensor 3/3 killed — ver `validation.md`).
+- [x] Commits atômicos por task (AD-005): f083aba, 18eb9f3, 6acc87a, 9309e07.

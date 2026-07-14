@@ -12,5 +12,7 @@
 
 ## Handoff
 
-- **Feature ativa:** `etapa-1-fundacao` — spec escrita, aguardando aprovação do usuário.
-- **Próximo passo:** usuário aprova/ajusta a spec → Execute (Design e Tasks formais dispensados; escopo Medium).
+- **Feature ativa:** `etapa-1-fundacao` — implementada e verificada (Verifier PASS, `validation.md`); commits f083aba..9309e07.
+- **Pendente:** UAT interativo com o usuário no Expo Go (AD-003): app abre, splash até fontes carregarem, tela com fundo canvas + título Archivo + corpo Cormorant, fontes distintas.
+- **Próximo passo:** usuário confirma UAT → fechar Etapa 1 e especificar Etapa 2 (componentes base).
+- **Notas:** projeto Expo SDK 57 em `src/app` (expo-router); tokens em `src/theme/theme.ts`; gate = `npx tsc --noEmit` + `npm run lint` + `npm test` (jest-expo). Adaptive icon do template mantido (Etapa 11).
