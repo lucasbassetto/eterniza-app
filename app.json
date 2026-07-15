@@ -34,7 +34,15 @@
         }
       ],
       "expo-asset",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "O Eterniza usa a câmera para você fotografar o evento. As fotos ficam guardadas até a revelação.",
+          "enableMicrophonePermission": false,
+          "enableLocation": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
