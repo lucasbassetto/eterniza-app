@@ -179,11 +179,11 @@ filtrada = UAT.
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| FILT-01 | P1: Rebuild com módulos 7–9 | Execute | Not started |
-| FILT-02 | P1: Filtros como dados | Execute | Not started |
-| FILT-03 | P1: Preview ao vivo | Execute | Not started |
-| FILT-04 | P1: Carrossel | Execute | Not started |
-| FILT-05 | P1: Foto enviada filtrada | Execute | Not started |
+| FILT-01 | P1: Rebuild com módulos 7–9 | Execute | Implementado (config) — commit b655a37; build/UAT pendente no Mac |
+| FILT-02 | P1: Filtros como dados | Execute | Verified — commit c5b38aa |
+| FILT-03 | P1: Preview ao vivo | Execute | Verified (fiação) — commits 5f5d8b6 + 9ef343f; fluidez/look = UAT |
+| FILT-04 | P1: Carrossel | Execute | Verified — commit 5f5d8b6 |
+| FILT-05 | P1: Foto enviada filtrada | Execute | Verified (fiação+pipeline) — commits d5fc173 + 9ef343f; imagem real = UAT |
 
 **Coverage:** 5 total, 0 mapped to tasks (tasks implícitas no Execute), 0 unmapped.
 
@@ -194,5 +194,7 @@ filtrada = UAT.
 - [ ] **Preview com filtro em tempo real fluido (≥30fps)** — UAT no iPhone.
 - [ ] **Foto no backend já filtrada** — UAT: baixar da moderação e conferir o filtro.
 - [ ] Regressão zero pós-rebuild (suíte inteira + fumaça nas telas 1–6).
-- [ ] Gate automatizado verde: `tsc --noEmit` + lint + testes.
-- [ ] Commits atômicos (AD-005).
+- [x] Gate automatizado verde: `tsc --noEmit` + lint + 136/136 testes. Verificação inline com
+      sensor 6/6 (default ≠ Original, pesos do P&B, bypass do pipeline, matriz fixa, upload
+      com uri da câmera, frame processor nunca acoplado — todas detectadas).
+- [x] Commits atômicos (AD-005): b655a37, c5b38aa, d5fc173, 5f5d8b6, 9ef343f.

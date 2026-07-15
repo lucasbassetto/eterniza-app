@@ -181,6 +181,7 @@ filtros (Skia), telas do host, estados vazios e microinterações.
 
 | Pendência | Impacto | Quando resolver |
 |---|---|---|
+| **URLs do storage local vêm como `http://localhost:9000/...`** | O PC carrega, mas o **celular físico não** (para ele, `localhost` é ele mesmo). Não afeta o upload (Etapa 6) — afeta **exibir** as imagens no aparelho (Etapas 8–10: fotos trancadas com capa, galeria, moderação) | Antes da Etapa 8: definir a env var `R2_PUBLIC_URL=http://<IP-da-máquina-na-rede>:9000/eterniza-photos` na run config do backend (ex.: `http://192.168.100.x:9000/...`) e reiniciar. Liberar a porta 9000 no Firewall do Windows, como a 8080. O default `localhost` do `application.yml` fica como está — o IP muda por rede, é config de ambiente |
 | CORS não configurado | **Nenhum para o app** (apps nativos não usam CORS); só importa se um dia existir cliente web | Se/quando houver front web |
 | HTTPS + domínio | Necessário para produção (iOS ATS bloqueia HTTP) e para os deep links universais | Antes do lançamento |
 | guestToken em rota de host → 500 (em vez de 403) | Cosmético; não afeta fluxo correto | Qualquer hora |
