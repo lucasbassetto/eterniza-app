@@ -26,6 +26,7 @@ export default function GuestCamera() {
   const cameraRef = useRef<Camera>(null);
   const [position, setPosition] = useState<'back' | 'front'>('back');
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [capturing, setCapturing] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -107,13 +108,18 @@ export default function GuestCamera() {
   });
 
   const takePhoto = async () => {
-    if (!cameraRef.current) return;
+    // `capturing` dá feedback imediato no toque e barra toque duplo — a captura
+    // em si leva um instante e o isPending do upload só começa depois dela
+    if (!cameraRef.current || capturing) return;
+    setCapturing(true);
     setUploadError(null);
     try {
       const photo = await cameraRef.current.takePhoto();
       upload.mutate(photo.path);
     } catch {
       setUploadError('Não foi possível capturar. Tente de novo.');
+    } finally {
+      setCapturing(false);
     }
   };
 
@@ -166,7 +172,7 @@ export default function GuestCamera() {
 
   // ─── Câmera ──────────────────────────────────────────────────────────
   const limit = event!.photoLimitPerGuest;
-  const shutter = shutterStateFor(remaining ?? limit, upload.isPending);
+  const shutter = shutterStateFor(remaining ?? limit, upload.isPending || capturing);
 
   const ringColor = {
     ready: colors.editorialText,
@@ -183,7 +189,9 @@ export default function GuestCamera() {
           style={StyleSheet.absoluteFill}
           device={device}
           format={format}
-          photoQualityBalance="quality"
+          // "balanced": mesma resolução máxima do format, mas sem o pipeline de
+          // processamento pesado do "quality" (que atrasava a captura em ~1s+)
+          photoQualityBalance="balanced"
           isActive
           photo
         />

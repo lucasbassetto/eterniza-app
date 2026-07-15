@@ -3,7 +3,7 @@
  * VisionCamera mockada (captura real = UAT, AD-003); fetch e secure store mockados.
  * Elo câmera→upload→contador→obturador testado inteiro (L-002).
  */
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import * as SecureStore from 'expo-secure-store';
 import { Linking } from 'react-native';
@@ -11,9 +11,10 @@ import { useCameraDevice, useCameraPermission } from 'react-native-vision-camera
 
 import { queryClient } from '@/api/query-client';
 
-// Helper do mock (não existe nos tipos reais do módulo)
-const { __resetVisionCamera } = jest.requireMock('react-native-vision-camera') as {
+// Helpers do mock (não existem nos tipos reais do módulo)
+const { __resetVisionCamera, __takePhotoMock } = jest.requireMock('react-native-vision-camera') as {
   __resetVisionCamera: () => void;
+  __takePhotoMock: jest.Mock;
 };
 
 const secureStoreMock = SecureStore as unknown as {
@@ -123,6 +124,30 @@ describe('Câmera do convidado (CAM-02/CAM-04)', () => {
 
     const saved = JSON.parse(secureStoreMock.__get(SESSION_KEY)!);
     expect(saved.photosRemaining).toBe(9);
+  });
+
+  it('captura em andamento: obturador ocupado no toque, toque duplo não vira duas fotos (CAM-04 AC4)', async () => {
+    seedSession();
+    fetchMock.mockResolvedValueOnce(eventOk).mockResolvedValueOnce(uploadOk(9));
+    let resolvePhoto!: () => void;
+    __takePhotoMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvePhoto = () => resolve({ path: '/mock/DCIM/photo-0001.jpg', width: 4032, height: 3024 });
+        }),
+    );
+    await openCamera();
+
+    // sem await: o press inicia a captura pendurada — aguardá-lo seria deadlock
+    void fireEvent.press(screen.getByTestId('shutter'));
+    await waitFor(() => expect(__takePhotoMock).toHaveBeenCalledTimes(1));
+    void fireEvent.press(screen.getByTestId('shutter')); // toque duplo durante a captura lenta
+
+    await act(async () => resolvePhoto());
+    await waitFor(() => expect(screen.getByTestId('poses-counter')).toHaveTextContent('9 de 10'));
+
+    expect(__takePhotoMock).toHaveBeenCalledTimes(1); // uma captura, um upload
+    expect(fetchMock).toHaveBeenCalledTimes(2); // GET evento + 1 POST
   });
 
   it('falha de rede: pose NÃO é gasta, erro discreto, obturador volta a funcionar (CAM-03 AC3)', async () => {
