@@ -10,7 +10,8 @@ jest.mock('expo-crypto');
 // Câmera nativa mockada (captura real = UAT, AD-003)
 jest.mock('react-native-vision-camera');
 
-// Módulos nativos do rebuild da Etapa 7 (GPU/FS/vibração não existem no jest)
+// Módulos nativos do rebuild da Etapa 7 (GPU/vibração não existem no jest).
+// expo-file-system já é mockado pelo próprio jest-expo (factory); a suíte do
+// pipeline registra o mock manual dela por cima quando precisa dos helpers.
 jest.mock('@shopify/react-native-skia');
 jest.mock('expo-haptics');
-jest.mock('expo-file-system');
