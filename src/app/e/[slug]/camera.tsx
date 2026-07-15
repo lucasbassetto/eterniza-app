@@ -41,8 +41,13 @@ export default function GuestCamera() {
   }, [hasPermission]);
 
   const device = useCameraDevice(position);
-  // Resolução máxima de foto — nunca comprimir (regra 4 do brief)
-  const format = useCameraFormat(device, [{ photoResolution: 'max' }]);
+  // Foto na resolução máxima (regra 4 do brief) E vídeo máximo/30fps: o preview
+  // usa o stream de vídeo do formato — otimizar só a foto deixa o preview borrado
+  const format = useCameraFormat(device, [
+    { photoResolution: 'max' },
+    { videoResolution: 'max' },
+    { fps: 30 },
+  ]);
 
   const eventQuery = useQuery({
     queryKey: ['event', slug],
