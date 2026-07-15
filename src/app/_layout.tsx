@@ -2,6 +2,8 @@ import { Archivo_300Light, Archivo_400Regular } from '@expo-google-fonts/archivo
 import { Cormorant_400Regular, Cormorant_500Medium } from '@expo-google-fonts/cormorant';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
+
+import { AuthProvider } from '@/api/auth-context';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -33,7 +35,9 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <AuthProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
