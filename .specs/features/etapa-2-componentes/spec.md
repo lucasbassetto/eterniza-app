@@ -135,11 +135,11 @@ Toda tela futura (câmera, galeria, host) precisa dos mesmos blocos: texto tipog
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| COMP-01 | P1: Text | Execute | Pending |
-| COMP-02 | P1: Button | Execute | Pending |
-| COMP-03 | P1: Input | Execute | Pending |
-| COMP-04 | P1: Screen | Execute | Pending |
-| COMP-05 | P1: Galeria /dev/components | Execute | Pending |
+| COMP-01 | P1: Text | Execute | Verified (UAT pendente) — commit 20a31e6 |
+| COMP-02 | P1: Button | Execute | Verified (UAT pendente) — commit 1788d3a |
+| COMP-03 | P1: Input | Execute | Verified (UAT pendente) — commit 9f072bf |
+| COMP-04 | P1: Screen | Execute | Verified (UAT pendente) — commit e01d62c |
+| COMP-05 | P1: Galeria /dev/components | Execute | Verified (UAT pendente) — commit ba17503 |
 
 **Coverage:** 5 total, 0 mapped to tasks (tasks implícitas no Execute — escopo Medium), 0 unmapped.
 

@@ -14,5 +14,5 @@
 ## Handoff
 
 - **Etapa 1 (`etapa-1-fundacao`):** ✅ CONCLUÍDA — Verifier PASS + UAT aprovado (2026-07-14). Commits f083aba..c89ae5e.
-- **Feature ativa:** `etapa-2-componentes` — spec em elaboração, aguardando aprovação do usuário.
+- **Feature ativa:** `etapa-2-componentes` — implementada e verificada (Verifier PASS, 38 testes, sensor 4/4); commits 20a31e6..ba17503. **Pendente: UAT interativo** na galeria `/dev/components` (link "componentes →" na home).
 - **Notas de ambiente:** teste em iPhone físico via `npx expo start --tunnel` (LAN bloqueada por firewall); Expo Go da App Store = SDK 54 (AD-006). Projeto em `src/app` (expo-router); tokens em `src/theme/theme.ts`; gate = `npx tsc --noEmit` + `npm run lint` + `npm test` (jest-expo). Adaptive icon do template mantido (Etapa 11).
