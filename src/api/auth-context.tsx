@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
 import { login, type Credentials } from './auth';
+import { setSessionExpiredListener } from './host-client';
 import { clearSession, getSession, saveSession } from './session';
 
 export type AuthStatus = 'loading' | 'signedIn' | 'signedOut';
@@ -28,6 +29,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
+  }, []);
+
+  useEffect(() => {
+    // Re-login automático falhou (API-04 AC3): sessão limpa → guarda leva ao login
+    setSessionExpiredListener(() => setStatus('signedOut'));
+    return () => setSessionExpiredListener(null);
   }, []);
 
   const signIn = async (credentials: Credentials) => {
