@@ -24,6 +24,9 @@ export const useCameraDevice = jest.fn((position: string) => ({
 
 export const useCameraFormat = jest.fn(() => undefined);
 
+// Frame processor Skia (GPU) — inerte no jest; fluidez/visual = UAT
+export const useSkiaFrameProcessor = jest.fn(() => undefined);
+
 export const __resetVisionCamera = () => {
   __takePhotoMock.mockClear();
   __takePhotoMock.mockImplementation(async () => ({

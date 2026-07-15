@@ -42,6 +42,13 @@
           "enableMicrophonePermission": false,
           "enableLocation": false
         }
+      ],
+      [
+        "expo-media-library",
+        {
+          "savePhotosPermission": "O Eterniza salva as fotos reveladas na sua galeria.",
+          "isAccessMediaLocationEnabled": false
+        }
       ]
     ],
     "experiments": {

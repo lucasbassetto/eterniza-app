@@ -9,3 +9,8 @@ jest.mock('expo-crypto');
 
 // Câmera nativa mockada (captura real = UAT, AD-003)
 jest.mock('react-native-vision-camera');
+
+// Módulos nativos do rebuild da Etapa 7 (GPU/FS/vibração não existem no jest)
+jest.mock('@shopify/react-native-skia');
+jest.mock('expo-haptics');
+jest.mock('expo-file-system');
