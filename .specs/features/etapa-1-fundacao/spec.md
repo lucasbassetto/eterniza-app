@@ -31,7 +31,7 @@ O app Eterniza ainda não existe como projeto de código — o workspace contém
 |---|---|---|---|
 | Onde o projeto vive | Scaffold **in-place** em `d:\eterniza-app` (raiz do workspace), preservando os 3 `.md` existentes | O workspace já é o repositório do app; evitar subpasta aninhada | n |
 | Git | `git init` nesta etapa + commit atômico ao final | ROADMAP exige "um commit atômico" por etapa e o diretório ainda não é repo | n |
-| Versão do Expo SDK | Última estável via `create-expo-app` (template default, que já traz TypeScript + `expo-router`) | Cadeia de verificação: template oficial atual, sem fixar versão manualmente | n |
+| Versão do Expo SDK | ~~Última estável (SDK 57)~~ → **SDK 54**, fixado | UAT revelou que o Expo Go da App Store (iPhone do usuário) suporta só SDK 54 — ver AD-006 | y |
 | Gerenciador de pacotes | `npm` | Default do ecossistema Expo; nada no brief indica outro | n |
 | Gate automatizado da etapa | `tsc --noEmit` + teste unitário (`jest-expo`) comparando os tokens de `theme.ts` com os valores do §9 | O contrato do skill exige teste derivado dos ACs; tokens são a única parte verificável em código (AD-003: visual = UAT) | n |
 | Conteúdo da tela placeholder | "Eterniza" em `display`/Archivo + parágrafo curto em `body`/Cormorant, fundo `canvas`, gutter 24 | Mínimo que prova os 3 requisitos visuais do roadmap | n |
