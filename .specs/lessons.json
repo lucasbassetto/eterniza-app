@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 2,
+  "next_id": 3,
   "lessons": [
     {
       "id": "L-001",
@@ -22,6 +22,24 @@
       ],
       "created": "2026-07-15T01:27:08Z",
       "last_seen": "2026-07-15T01:27:08Z"
+    },
+    {
+      "id": "L-002",
+      "key": "surviving_mutant::testar as duas pontas de um efeito cross modulo em suites separadas nao prova a fiacao o elo listener callback registrado precisa de um teste ponta a ponta proprio",
+      "text": "Testar as duas pontas de um efeito cross-modulo em suites separadas nao prova a fiacao; o elo (listener/callback registrado) precisa de um teste ponta-a-ponta proprio",
+      "signal": "surviving_mutant",
+      "scope": "auth",
+      "status": "candidate",
+      "features": [
+        "etapa-4-api-auth"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md sensor M5: src/api/auth-context.tsx:36 (auth)"
+      ],
+      "created": "2026-07-15T02:04:07Z",
+      "last_seen": "2026-07-15T02:04:07Z"
     }
   ]
 }

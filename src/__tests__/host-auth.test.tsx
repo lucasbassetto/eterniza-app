@@ -2,9 +2,11 @@
  * API-03 — Login do host com sessão persistida (spec etapa-4-api-auth).
  * Backend real = UAT (AD-003); aqui fetch e secure store são mockados.
  */
-import { fireEvent, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import * as SecureStore from 'expo-secure-store';
+
+import { hostRequest, SessionExpiredError } from '@/api/host-client';
 
 const secureStoreMock = SecureStore as unknown as {
   __reset: () => void;
@@ -110,5 +112,34 @@ describe('Login do host (API-03)', () => {
     await view;
 
     expect(await screen.findByText('Login do host')).toBeOnTheScreen();
+  });
+
+  it('sessão expirada irrecuperável durante o uso: app volta para /host/login (API-04 AC3)', async () => {
+    secureStoreMock.__seed(SESSION);
+    const view = renderRouter('./src/app', { initialUrl: '/host/events' });
+    await view;
+    await screen.findByText('Meus eventos');
+
+    // request autenticado encontra 401 e o re-login falha (senha mudou no servidor)
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: () => Promise.reject(new SyntaxError('empty')),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: () =>
+          Promise.resolve({ success: false, message: 'Credenciais inválidas' }),
+      } as Response);
+
+    await act(async () => {
+      await expect(hostRequest('/api/events/my')).rejects.toBeInstanceOf(SessionExpiredError);
+    });
+
+    // AuthProvider flipa para signedOut → guarda redireciona ao login
+    expect(await screen.findByText('Login do host')).toBeOnTheScreen();
+    expect(view.getPathname()).toBe('/host/login');
   });
 });

@@ -17,6 +17,6 @@
 - **Etapa 1 (`etapa-1-fundacao`):** ✅ CONCLUÍDA — Verifier PASS + UAT aprovado (2026-07-14). Commits f083aba..c89ae5e.
 - **Etapa 2 (`etapa-2-componentes`):** ✅ CONCLUÍDA — Verifier PASS (38 testes, sensor 4/4) + UAT aprovado (2026-07-14). Commits 20a31e6..a05e932.
 - **Etapa 3 (`etapa-3-navegacao`):** ✅ CONCLUÍDA — Verifier FAIL→fix→PASS (55 testes, sensor 5/5, lesson L-001) + UAT aprovado (2026-07-14). Commits 6c09f42..f9fc748. `eterniza://` literal re-verifica na Etapa 6.
-- **Feature ativa:** `etapa-4-api-auth` — spec escrita, aguardando aprovação do usuário; usuário subindo o backend local (eterniza-mono, Spring Boot, porta 8080).
+- **Feature ativa:** `etapa-4-api-auth` — implementada e verificada (Verifier ISSUES→fix→PASS, 76 testes, sensor 5/5 após fix, lesson L-002); commits 3341a00..29f512f + fix. **Pendente: UAT interativo** (login real + sessão entre reaberturas no iPhone). Backend local rodando (porta 8080, envelope confirmado).
 - **Atenção UAT Etapa 4:** iPhone físico precisa alcançar `http://<IP-da-máquina>:8080` — liberar porta 8080 no firewall do Windows (o firewall já bloqueou o Metro; por isso o Expo usa tunnel).
 - **Notas de ambiente:** teste em iPhone físico via `npx expo start --tunnel` (LAN bloqueada por firewall); Expo Go da App Store = SDK 54 (AD-006). Projeto em `src/app` (expo-router); tokens em `src/theme/theme.ts`; gate = `npx tsc --noEmit` + `npm run lint` + `npm test` (jest-expo). Adaptive icon do template mantido (Etapa 11).

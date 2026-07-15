@@ -20,6 +20,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md sensor M1: src/app/e/[slug]/index.tsx:21 (routes)
 - last seen: 2026-07-15T01:27:08Z
 
+### L-002 — Testar as duas pontas de um efeito cross-modulo em suites separadas nao prova a fiacao; o elo (listener/callback registrado) precisa de um teste ponta-a-ponta proprio
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `auth` · harmful: 0
+- features: etapa-4-api-auth
+- evidence: validation.md sensor M5: src/api/auth-context.tsx:36 (auth)
+- last seen: 2026-07-15T02:04:07Z
+
 ## Quarantined (failed when applied — ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

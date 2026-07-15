@@ -123,10 +123,10 @@ Nenhuma tela fala com o backend ainda. Antes dos fluxos reais (convidado na Etap
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| API-01 | P1: Cliente da API | Execute | Pending |
-| API-02 | P1: TanStack Query | Execute | Pending |
-| API-03 | P1: Login com sessão persistida | Execute | Pending |
-| API-04 | P1: Re-login automático | Execute | Pending |
+| API-01 | P1: Cliente da API | Execute | Verified — commit 3341a00 |
+| API-02 | P1: TanStack Query | Execute | Verified — commit 601cc9e |
+| API-03 | P1: Login com sessão persistida | Execute | Verified (UAT pendente) — commit 225a9c2 |
+| API-04 | P1: Re-login automático | Execute | Verified — commit 29f512f + fix |
 
 **Coverage:** 4 total, 0 mapped to tasks (tasks implícitas no Execute — escopo Medium), 0 unmapped.
 
