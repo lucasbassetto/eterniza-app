@@ -154,9 +154,11 @@ erro de validação, sessão existente pulando direto pra câmera); fluxo real c
 
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002)
 
-- [ ] Fluxo completo contra o backend local: abrir `/e/[slug]` com um slug real, ver o nome do
-      evento, digitar nome, cair na câmera (esqueleto) — UAT interativo no iPhone (AD-003).
-- [ ] Slug inexistente mostra erro elegante — verificável no mesmo UAT.
+- [x] Fluxo completo contra o backend local — UAT aprovado no iPhone (2026-07-15): convite com
+      nome real do evento → nome → câmera; reabrir o link pulou a tela de nome (sessão
+      persistida). Link `exp://.../--/e/{slug}` fez o papel do QR (universal link real é
+      pré-lançamento).
+- [x] Slug inexistente mostrou "Convite não encontrado" — UAT aprovado (2026-07-15).
 - [x] Gate automatizado verde: `tsc --noEmit` + lint + testes — 91/91, Verifier PASS
       (sensor 6/6 mutações detectadas).
 - [x] Commits atômicos (AD-005): cd92639, 9e498f7, 7723853.
