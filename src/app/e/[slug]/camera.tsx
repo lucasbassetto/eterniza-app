@@ -1,4 +1,6 @@
+import { Skia } from '@shopify/react-native-skia';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Animated, Easing, Linking, Pressable, StyleSheet, View } from 'react-native';
@@ -8,6 +10,7 @@ import {
   useCameraDevice,
   useCameraFormat,
   useCameraPermission,
+  useSkiaFrameProcessor,
 } from 'react-native-vision-camera';
 
 import { ApiError, NetworkError } from '@/api/client';
@@ -15,7 +18,10 @@ import { getEventBySlug } from '@/api/events';
 import { getGuestSession, updatePhotosRemaining, type GuestSession } from '@/api/guest-session';
 import { uploadPhoto } from '@/api/photos';
 import { isLimitError, shutterStateFor } from '@/api/poses';
+import { applyFilterToPhoto } from '@/camera/filter-pipeline';
+import { DEFAULT_FILTER, isOriginal } from '@/camera/filters';
 import { Button } from '@/components/button';
+import { FilterCarousel } from '@/components/filter-carousel';
 import { Text } from '@/components/text';
 import { colors, radius, spacing } from '@/theme/theme';
 
@@ -28,6 +34,7 @@ export default function GuestCamera() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState(DEFAULT_FILTER);
   const blinkOpacity = useRef(new Animated.Value(0)).current;
 
   // A "piscada" do visor: preto instantâneo + reabertura em fade (DS §7 — fast, easeOutCubic)
@@ -62,6 +69,19 @@ export default function GuestCamera() {
     { videoResolution: 'max' },
     { fps: 30 },
   ]);
+
+  // Preview ao vivo com a matriz do filtro na GPU (FILT-03); Original dispensa
+  // o frame processor — preview idêntico ao da Etapa 6
+  const filterMatrix = selectedFilter.matrix;
+  const frameProcessor = useSkiaFrameProcessor(
+    (frame) => {
+      'worklet';
+      const paint = Skia.Paint();
+      paint.setColorFilter(Skia.ColorFilter.MakeMatrix(filterMatrix));
+      frame.render(paint);
+    },
+    [filterMatrix],
+  );
 
   const eventQuery = useQuery({
     queryKey: ['event', slug],
@@ -121,15 +141,19 @@ export default function GuestCamera() {
   });
 
   const takePhoto = async () => {
-    // `capturing` dá feedback imediato no toque e barra toque duplo — a captura
-    // em si leva um instante e o isPending do upload só começa depois dela
+    // `capturing` dá feedback imediato no toque e barra toque duplo — captura e
+    // filtro levam um instante e o isPending do upload só começa depois deles
     if (!cameraRef.current || capturing) return;
     setCapturing(true);
     setUploadError(null);
     runShutterBlink();
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    // Trava o filtro do momento do clique: trocar durante o processamento não afeta esta foto
+    const filter = selectedFilter;
     try {
       const photo = await cameraRef.current.takePhoto();
-      upload.mutate(photo.path);
+      const fileUri = await applyFilterToPhoto(photo.path, filter);
+      upload.mutate(fileUri);
     } catch {
       setUploadError('Não foi possível capturar. Tente de novo.');
     } finally {
@@ -206,6 +230,7 @@ export default function GuestCamera() {
           // "balanced": mesma resolução máxima do format, mas sem o pipeline de
           // processamento pesado do "quality" (que atrasava a captura em ~1s+)
           photoQualityBalance="balanced"
+          frameProcessor={isOriginal(selectedFilter) ? undefined : frameProcessor}
           isActive
           photo
         />
@@ -239,6 +264,12 @@ export default function GuestCamera() {
               {uploadError}
             </Text>
           ) : null}
+
+          <FilterCarousel
+            selectedKey={selectedFilter.key}
+            onSelect={setSelectedFilter}
+            disabled={shutter === 'exhausted'}
+          />
 
           <View style={styles.controls}>
             <View style={styles.controlSide} />
