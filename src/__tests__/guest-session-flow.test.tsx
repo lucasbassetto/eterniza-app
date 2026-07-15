@@ -35,6 +35,7 @@ const eventOk = {
         revealAt: '2026-08-01T20:00:00Z',
         photoLimitPerGuest: 10,
         photoCount: 3,
+        coverImageUrl: null,
         createdAt: '2026-07-01T12:00:00Z',
       },
     }),

@@ -10,6 +10,8 @@ export interface EventResponse {
   revealAt: string;
   photoLimitPerGuest: number;
   photoCount: number;
+  /** Capa do convite (foto dos noivos). `null` = fundo padrão editorial (brief §3). */
+  coverImageUrl: string | null;
   createdAt: string;
 }
 

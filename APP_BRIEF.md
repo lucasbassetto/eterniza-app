@@ -88,6 +88,7 @@ Erro de validação de payload (400) traz também `errors` (campo → mensagem):
 | `GET /api/events/slug/{slug}` | — | O que o app chama ao abrir o link do QR → EventResponse |
 | `GET /api/events/my` | host | Meus eventos → lista de EventResponse |
 | `POST /api/events/{id}/reveal` | host (dono) | Revelar agora (idempotente) → EventResponse |
+| `POST /api/events/{id}/cover` | host (dono) | Multipart: `file` (foto dos noivos, JPEG/PNG/WebP ≤20MB) → EventResponse com `coverImageUrl`. Reenviar substitui |
 | `POST /api/photos/upload` | guest | Multipart: `file` (imagem **já filtrada**, JPEG/PNG/WebP, ≤20MB) + `eventId` → `{photoId, message, photosRemaining}` |
 | `GET /api/photos/gallery/{eventId}` | — | Galeria pública → `{revealed, totalPhotos, photoUrls[]}` |
 | `GET /api/photos/event/{eventId}` | host (dono) | Moderação → `[{photoId, guestName, createdAt, url}]` (url **sempre** presente, mesmo antes do reveal) |
@@ -101,11 +102,14 @@ Erro de validação de payload (400) traz também `errors` (campo → mensagem):
   "qrCodeUrl": "https://eterniza.app/e/casamento-ana-joao-x7k2",
   "status": "ACTIVE | REVEALED",
   "revealAt": "2026-08-01T20:00:00Z",
-  "photoLimitPerGuest": 10, "photoCount": 3, "createdAt": "..."
+  "photoLimitPerGuest": 10, "photoCount": 3,
+  "coverImageUrl": "https://<bucket>.r2.dev/events/.../cover.jpg",
+  "createdAt": "..."
 }
 ```
 - `qrCodeUrl` é o **link**, não a imagem — o app gera o QR a partir dela.
 - `photoCount` é a contagem real de fotos visíveis do evento.
+- `coverImageUrl` é a capa do convite (foto dos noivos): fundo full-bleed da tela `/e/{slug}` e da revelação, com scrim `overlay` por cima. **`null` = usar fundo padrão** (`editorial`).
 
 ### Erros que o app deve tratar no upload
 | Status | Situação |
@@ -138,7 +142,8 @@ Erro de validação de payload (400) traz também `errors` (campo → mensagem):
 ### Convidado
 ```
 QR → app abre /e/{slug} → GET /events/slug/{slug}
-  → tela "Você foi convidado para {name}" + campo nome
+  → tela-convite: coverImageUrl como fundo full-bleed (scrim overlay)
+    + "Você foi convidado para {name}" + campo nome
   → POST /auth/guest/session (deviceId persistido)
   → CÂMERA (filtros ao vivo, contador de poses)
   → upload a cada foto (photosRemaining atualiza o contador)
@@ -148,7 +153,8 @@ QR → app abre /e/{slug} → GET /events/slug/{slug}
 ### Host
 ```
 Login (conta criada/entregue pelo serviço)
-  → meus eventos → evento: QR para imprimir/compartilhar, photoCount ao vivo
+  → meus eventos → evento: QR para imprimir/compartilhar, photoCount ao vivo,
+    enviar/trocar a capa do convite (foto dos noivos, da galeria do celular)
   → moderação: grade de fotos (visível pré-reveal), apagar as impróprias
   → botão "Revelar agora" (confirmação!) ou espera o revealAt
 ```

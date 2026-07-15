@@ -7,24 +7,33 @@ import { renderRouter } from 'expo-router/testing-library';
 
 import { queryClient } from '@/api/query-client';
 
+const baseEvent = {
+  id: 'evt-1',
+  name: 'Casamento Ana & João',
+  slug: 'ana-e-joao',
+  qrCodeUrl: 'https://eterniza.app/e/ana-e-joao',
+  status: 'ACTIVE',
+  revealAt: '2026-08-01T20:00:00Z',
+  photoLimitPerGuest: 10,
+  photoCount: 3,
+  coverImageUrl: null as string | null,
+  createdAt: '2026-07-01T12:00:00Z',
+};
+
 const eventOk = {
+  ok: true,
+  status: 200,
+  json: () => Promise.resolve({ success: true, message: 'ok', data: baseEvent }),
+} as Response;
+
+const eventWithCover = {
   ok: true,
   status: 200,
   json: () =>
     Promise.resolve({
       success: true,
       message: 'ok',
-      data: {
-        id: 'evt-1',
-        name: 'Casamento Ana & João',
-        slug: 'ana-e-joao',
-        qrCodeUrl: 'https://eterniza.app/e/ana-e-joao',
-        status: 'ACTIVE',
-        revealAt: '2026-08-01T20:00:00Z',
-        photoLimitPerGuest: 10,
-        photoCount: 3,
-        createdAt: '2026-07-01T12:00:00Z',
-      },
+      data: { ...baseEvent, coverImageUrl: 'https://cdn.eterniza.app/events/evt-1/cover.jpg' },
     }),
 } as Response;
 
@@ -56,6 +65,19 @@ describe('Convite do evento (GUEST-01)', () => {
 
     const [url] = fetchMock.mock.calls[0];
     expect(url).toBe('http://test.local:8080/api/events/slug/ana-e-joao');
+    expect(screen.queryByTestId('cover-image')).toBeNull(); // coverImageUrl null → sem foto
+  });
+
+  it('coverImageUrl presente: capa como fundo full-bleed (brief §3/§5)', async () => {
+    fetchMock.mockResolvedValue(eventWithCover);
+    const view = renderRouter('./src/app', { initialUrl: '/e/ana-e-joao' });
+    await view;
+
+    const image = await screen.findByTestId('cover-image');
+    expect(image.props.source).toEqual({
+      uri: 'https://cdn.eterniza.app/events/evt-1/cover.jpg',
+    });
+    expect(screen.getByPlaceholderText('Como você quer aparecer')).toBeOnTheScreen();
   });
 
   it('slug inexistente (404): erro elegante, sem campo de nome (AC3)', async () => {

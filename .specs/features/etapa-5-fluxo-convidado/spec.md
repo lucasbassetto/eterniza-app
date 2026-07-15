@@ -152,6 +152,32 @@ erro de validação, sessão existente pulando direto pra câmera); fluxo real c
 
 ---
 
+---
+
+## Addendum (2026-07-15) — Capa do convite (`coverImageUrl`)
+
+O `APP_BRIEF.md` foi atualizado depois do UAT desta etapa: `EventResponse` ganhou o campo
+`coverImageUrl` (string ou `null`) e um novo endpoint `POST /api/events/{id}/cover` (host,
+multipart) para o casal enviar a foto de capa. O upload em si é **host** — pertence à Etapa 10
+(telas do host) e ainda não foi implementado. Este addendum cobre só o **consumo** pelo
+convidado, incremento pequeno sobre a Etapa 5 já concluída.
+
+**Mudança**: `/e/[slug]` passa a exibir `coverImageUrl` como fundo full-bleed com scrim
+(`overlay`, DS) quando presente — ref. landing_6; quando `null`, mantém o layout tipográfico
+original (fallback). `Input` ganhou a prop `onDark` (mesmo padrão de `Text`/`Button`) para o
+label/erro permanecerem legíveis sobre a foto.
+
+**Testes**: `guest-invite.test.tsx` cobre os dois ramos (capa presente → `Image` com a URL
+certa; ausente → sem `Image`, layout original). Demais fixtures de evento nos outros arquivos
+de teste atualizados com `coverImageUrl: null` por precisão de contrato (comportamento
+inalterado nesses casos).
+
+**Pendente**: upload da capa pelo host (Etapa 10). Sugestão para o UAT antes da Etapa 10: setar
+a capa manualmente via Postman (`POST /api/events/{id}/cover` com hostToken) no evento de teste
+para validar visualmente o novo fundo.
+
+---
+
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002)
 
 - [x] Fluxo completo contra o backend local — UAT aprovado no iPhone (2026-07-15): convite com

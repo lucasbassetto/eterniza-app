@@ -36,7 +36,7 @@
 ✅ **Verificar**: com o backend rodando, logar de verdade e ver o token persistir entre reaberturas do app.
 
 ## Etapa 5 — Fluxo de entrada do convidado
-- `/e/[slug]`: busca `GET /api/events/slug/{slug}`, tela "Você foi convidado para {name}" + campo nome
+- `/e/[slug]`: busca `GET /api/events/slug/{slug}`, tela-convite com `coverImageUrl` como fundo full-bleed + scrim `overlay` (fundo `editorial` quando `coverImageUrl` for null) + "Você foi convidado para {name}" + campo nome
 - `deviceId`: gerar UUID **uma única vez**, persistir em secure store (regra 1 do brief — nunca regenerar)
 - `POST /api/auth/guest/session` e navegação para a câmera (ainda esqueleto)
 
@@ -74,6 +74,7 @@
 ## Etapa 10 — Telas do host
 - Meus eventos, criar evento (**planos como opções**: "Essencial — 10 fotos", "Premium — 16" → `photoLimitPerGuest`; regra 9 do brief)
 - Tela do evento: QR gerado de `qrCodeUrl` (`react-native-qrcode-svg`), `photoCount` ao vivo, botão "Revelar agora" (variante Destaque + confirmação)
+- Capa do convite: escolher foto dos noivos da galeria do celular e enviar via `POST /api/events/{id}/cover` (multipart); mostrar a capa atual e permitir trocar
 - Moderação: grade com fotos visíveis (host vê sempre), apagar com confirmação (aviso: pose do convidado não volta)
 
 ✅ **Verificar**: ciclo completo só pelo app — host cria evento → convidado (outro device/perfil) fotografa → host modera → revela → galeria abre.

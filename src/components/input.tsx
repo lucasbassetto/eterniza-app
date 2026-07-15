@@ -8,9 +8,11 @@ export interface InputProps extends TextInputProps {
   label?: string;
   /** Mensagem de erro: borda vira error e a mensagem aparece abaixo em caption/error. */
   error?: string;
+  /** Contexto escuro (fundo foto/editorial): label e erro viram legíveis sobre o scrim. */
+  onDark?: boolean;
 }
 
-export function Input({ label, error, onFocus, onBlur, style, ...rest }: InputProps) {
+export function Input({ label, error, onDark = false, onFocus, onBlur, style, ...rest }: InputProps) {
   const [focused, setFocused] = useState(false);
 
   const borderStyle = {
@@ -20,7 +22,9 @@ export function Input({ label, error, onFocus, onBlur, style, ...rest }: InputPr
 
   return (
     <View>
-      {label ? <RNText style={styles.label}>{label}</RNText> : null}
+      {label ? (
+        <RNText style={[styles.label, onDark && styles.labelOnDark]}>{label}</RNText>
+      ) : null}
       <TextInput
         {...rest}
         style={[styles.field, borderStyle, style]}
@@ -35,7 +39,7 @@ export function Input({ label, error, onFocus, onBlur, style, ...rest }: InputPr
         }}
       />
       {error ? (
-        <RNText testID="input-error" style={styles.error}>
+        <RNText testID="input-error" style={[styles.error, onDark && styles.errorOnDark]}>
           {error}
         </RNText>
       ) : null}
@@ -51,6 +55,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginBottom: spacing.sm,
   },
+  labelOnDark: {
+    color: colors.editorialTextMuted,
+  },
   field: {
     ...type.body,
     color: colors.ink,
@@ -63,5 +70,8 @@ const styles = StyleSheet.create({
     ...type.caption,
     color: colors.error,
     marginTop: spacing.xs,
+  },
+  errorOnDark: {
+    color: colors.editorialText,
   },
 });
