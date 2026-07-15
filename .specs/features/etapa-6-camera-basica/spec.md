@@ -184,10 +184,10 @@ estados; persistência com secure store mockado; suíte E2E tela↔upload↔cont
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| CAM-01 | P1: Dev build funcionando | Execute | Implementado (config) — commit 6fd8262; build/UAT pendente no Mac |
-| CAM-02 | P1: Câmera com preview e captura | Execute | Verified (código) — commit 3aa8283; captura real = UAT |
-| CAM-03 | P1: Upload real com erros tratados | Execute | Verified — commit 9524005 |
-| CAM-04 | P1: Contador de poses e obturador | Execute | Verified — commit 0aa8d66 + 3aa8283 |
+| CAM-01 | P1: Dev build funcionando | Execute | Verified + UAT aprovado (2026-07-15) — commit 6fd8262; build no Mac OK |
+| CAM-02 | P1: Câmera com preview e captura | Execute | Verified + UAT aprovado — commit 3aa8283 + fixes 710c08b (preview), 1166def (latência), 17fb2f3 (efeito de captura) |
+| CAM-03 | P1: Upload real com erros tratados | Execute | Verified + UAT aprovado — commit 9524005 |
+| CAM-04 | P1: Contador de poses e obturador | Execute | Verified + UAT aprovado — commit 0aa8d66 + 3aa8283 |
 
 **Coverage:** 4 total, 0 mapped to tasks (tasks implícitas no Execute), 0 unmapped.
 
@@ -207,12 +207,16 @@ estados; persistência com secure store mockado; suíte E2E tela↔upload↔cont
 
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002)
 
-- [ ] **Foto tirada no iPhone aparece no backend** (conferida via Postman em
-      `GET /api/photos/event/{eventId}` com hostToken) — UAT interativo (AD-003).
-- [ ] **Ao estourar o limite, o obturador desabilita ANTES do erro** — UAT: tirar as 10 fotos
-      do evento de teste e observar o estado esgotado sem nenhum erro de servidor.
-- [ ] Deep link `eterniza://e/{slug}` abre o convite no dev build — UAT (fecha a pendência da
-      Etapa 3).
+- [x] **Foto tirada no iPhone aparece no backend** — UAT aprovado (2026-07-15): 10 fotos do
+      convidado real no evento de teste, verificadas via `GET /api/photos/event/{id}`;
+      resolução **4032×3024 (máxima do sensor)**, ~2,65 MB, sem compressão. Bloqueio de
+      ambiente resolvido no caminho: storage do backend (R2/S3) falhava handshake TLS —
+      corrigido no backend com path-style access + MinIO local.
+- [x] **Ao estourar o limite, o obturador desabilita ANTES do erro** — UAT aprovado: 10 poses
+      gastas, obturador desabilitado com mensagem serena, sem erro de servidor; fechar/reabrir
+      mantém "0 de 10" (persistência do esgotado).
+- [x] Deep link `eterniza://e/{slug}` abre o convite no dev build — UAT aprovado (fecha a
+      pendência da Etapa 3).
 - [x] Gate automatizado verde: `tsc --noEmit` + lint + 114/114 testes. Verificação com sensor
       6/6 (lastPose, isLimitError amplo, uri sem file://, pose gasta em falha, obturador sem
       disabled, sem persistência — todas detectadas). Verificação inline (agente Verifier
