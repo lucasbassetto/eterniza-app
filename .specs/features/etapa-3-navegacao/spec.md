@@ -109,10 +109,10 @@ O app precisa da espinha dorsal de navegação antes de qualquer fluxo real: as 
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| NAV-01 | P1: Rotas do convidado | Execute | Pending |
-| NAV-02 | P1: Rotas do host | Execute | Pending |
-| NAV-03 | P1: Deep link | Execute | Pending |
-| NAV-04 | P1: Home hub | Execute | Pending |
+| NAV-01 | P1: Rotas do convidado | Execute | Verified (UAT pendente) — commits 6c09f42 + fix |
+| NAV-02 | P1: Rotas do host | Execute | Verified (UAT pendente) — commit db69a24 |
+| NAV-03 | P1: Deep link | Execute | Verified (UAT pendente) — commit 6917705 |
+| NAV-04 | P1: Home hub | Execute | Verified (UAT pendente) — commit 4179496 |
 
 **Coverage:** 4 total, 0 mapped to tasks (tasks implícitas no Execute — escopo Medium), 0 unmapped.
 

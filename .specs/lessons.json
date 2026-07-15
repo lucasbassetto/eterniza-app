@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 2,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "surviving_mutant::cobrir a tela de destino via initialurl nao cobre a acao de navegar todo link botao de navegacao precisa de um teste de press com assercao de pathname",
+      "text": "Cobrir a tela de destino via initialUrl nao cobre a acao de navegar; todo Link/botao de navegacao precisa de um teste de press com assercao de pathname",
+      "signal": "surviving_mutant",
+      "scope": "routes",
+      "status": "candidate",
+      "features": [
+        "etapa-3-navegacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md sensor M1: src/app/e/[slug]/index.tsx:21 (routes)"
+      ],
+      "created": "2026-07-15T01:27:08Z",
+      "last_seen": "2026-07-15T01:27:08Z"
+    }
+  ]
+}
