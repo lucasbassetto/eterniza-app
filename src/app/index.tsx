@@ -1,40 +1,38 @@
 import { Link } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { colors, spacing, type } from '@/theme/theme';
+import { Button } from '@/components/button';
+import { Screen } from '@/components/screen';
+import { Text } from '@/components/text';
+import { spacing } from '@/theme/theme';
 
+/** Home (esqueleto — Etapa 10 traz a home real do host; ref. AD-007 landing_9/10). */
 export default function Index() {
   return (
-    <View style={styles.container}>
-      <Text style={[type.display, styles.title]}>Eterniza</Text>
-      <Text style={[type.body, styles.body]}>
-        A câmera descartável digital para casamentos. Fotografe, guarde o segredo e
-        reviva tudo na revelação.
-      </Text>
-      {/* Link temporário para o UAT da galeria — remover na Etapa 3 (navegação real) */}
-      <Link href="/dev/components" style={[type.caption, styles.devLink]}>
-        componentes →
-      </Link>
-    </View>
+    <Screen>
+      <View style={styles.content}>
+        <Text variant="display">Eterniza</Text>
+        <Text>
+          A câmera descartável digital para casamentos. Fotografe, guarde o segredo e
+          reviva tudo na revelação.
+        </Text>
+        <Link href="/host/login" asChild>
+          <Button title="Sou host" />
+        </Link>
+        {__DEV__ ? (
+          <Link href="/dev/components" asChild>
+            <Button title="galeria do design system (dev)" variant="text" />
+          </Link>
+        ) : null}
+      </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  content: {
     flex: 1,
-    backgroundColor: colors.canvas,
-    paddingHorizontal: spacing.xxl,
     justifyContent: 'center',
     gap: spacing.lg,
-  },
-  title: {
-    color: colors.ink,
-  },
-  body: {
-    color: colors.inkMuted,
-  },
-  devLink: {
-    color: colors.inkMuted,
-    textDecorationLine: 'underline',
   },
 });
