@@ -6,3 +6,6 @@ jest.mock('expo-secure-store');
 
 // UUIDs determinísticos para o deviceId do convidado
 jest.mock('expo-crypto');
+
+// Câmera nativa mockada (captura real = UAT, AD-003)
+jest.mock('react-native-vision-camera');

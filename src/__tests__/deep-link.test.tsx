@@ -82,8 +82,7 @@ describe('Deep link (NAV-03)', () => {
     const view = renderRouter('./src/app', { initialUrl: 'yourscheme:///e/teste-slug' });
     await view;
 
-    expect(await screen.findByText('Câmera', { exact: true })).toBeOnTheScreen();
+    expect(await screen.findByTestId('poses-counter')).toBeOnTheScreen();
     expect(view.getPathname()).toBe('/e/teste-slug/camera');
-    expect(screen.getByText('evento: teste-slug')).toBeOnTheScreen();
   });
 });

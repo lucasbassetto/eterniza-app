@@ -7,8 +7,14 @@
  */
 import { screen } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
+import * as SecureStore from 'expo-secure-store';
 
 import { queryClient } from '@/api/query-client';
+
+const secureStoreMock = SecureStore as unknown as {
+  __reset: () => void;
+  __seed: (entries: Record<string, string>) => void;
+};
 
 const eventOk = (name: string) =>
   ({
@@ -37,6 +43,7 @@ describe('Rotas do convidado (NAV-01)', () => {
 
   beforeEach(() => {
     fetchMock.mockReset();
+    secureStoreMock.__reset();
     queryClient.clear();
     global.fetch = fetchMock as unknown as typeof fetch;
   });
@@ -50,10 +57,15 @@ describe('Rotas do convidado (NAV-01)', () => {
     expect(url).toBe('http://test.local:8080/api/events/slug/teste-slug');
   });
 
-  it('/e/teste-slug/camera exibe título e o mesmo slug (AC2)', async () => {
+  it('/e/teste-slug/camera renderiza a câmera do slug (AC2 — desde a Etapa 6, com sessão)', async () => {
+    secureStoreMock.__seed({
+      'eterniza.guest.session.evt-1': JSON.stringify({ token: 'tok', displayName: 'Lia' }),
+    });
+    fetchMock.mockResolvedValue(eventOk('Festa Teste'));
     await renderRouter('./src/app', { initialUrl: '/e/teste-slug/camera' });
-    expect(await screen.findByText('Câmera')).toBeOnTheScreen();
-    expect(screen.getByText('evento: teste-slug')).toBeOnTheScreen();
+
+    expect(await screen.findByTestId('poses-counter')).toBeOnTheScreen();
+    expect(fetchMock.mock.calls[0][0]).toBe('http://test.local:8080/api/events/slug/teste-slug');
   });
 
   it('/e/teste-slug/gallery exibe título e o mesmo slug (AC3)', async () => {

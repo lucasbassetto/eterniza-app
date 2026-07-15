@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -17,6 +17,7 @@ import { colors, spacing } from '@/theme/theme';
 export default function GuestInvite() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState<string | null>(null);
 
@@ -36,7 +37,11 @@ export default function GuestInvite() {
 
   const mutation = useMutation({
     mutationFn: (displayName: string) => createGuestSession(event!.id, displayName),
-    onSuccess: () => router.replace({ pathname: '/e/[slug]/camera', params: { slug } }),
+    onSuccess: (token, displayName) => {
+      // Cache da sessão em dia (a câmera lê esta query; staleTime seguraria o null antigo)
+      queryClient.setQueryData(['guest-session', event!.id], { token, displayName });
+      router.replace({ pathname: '/e/[slug]/camera', params: { slug } });
+    },
   });
 
   if (eventQuery.isPending || (event && sessionQuery.isPending)) {

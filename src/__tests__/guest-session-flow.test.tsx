@@ -77,7 +77,7 @@ describe('Sessão do convidado — fluxo completo (GUEST-03)', () => {
     await fireEvent.changeText(screen.getByPlaceholderText('Como você quer aparecer'), '  Lia  ');
     await fireEvent.press(screen.getByRole('button', { name: 'Ir para a câmera' }));
 
-    expect(await screen.findByText('Câmera')).toBeOnTheScreen();
+    expect(await screen.findByTestId('poses-counter')).toBeOnTheScreen();
     expect(view.getPathname()).toBe('/e/ana-e-joao/camera');
 
     const [url, init] = fetchMock.mock.calls[1];
@@ -150,7 +150,7 @@ describe('Sessão do convidado — fluxo completo (GUEST-03)', () => {
     const view = renderRouter('./src/app', { initialUrl: '/e/ana-e-joao' });
     await view;
 
-    expect(await screen.findByText('Câmera')).toBeOnTheScreen();
+    expect(await screen.findByTestId('poses-counter')).toBeOnTheScreen();
     expect(view.getPathname()).toBe('/e/ana-e-joao/camera');
     expect(fetchMock).toHaveBeenCalledTimes(1); // só o GET do evento, sem novo POST de sessão
   });

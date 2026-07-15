@@ -148,9 +148,10 @@ elegância* de passar do limite — nunca ver um erro de servidor.
 
 **Acceptance Criteria**:
 
-1. WHEN entro na câmera THEN o contador SHALL mostrar "{usadas} de {photoLimitPerGuest}"
-   partindo do último `photosRemaining` conhecido (persistido com a sessão) ou do limite do
-   evento em sessão nova.
+1. WHEN entro na câmera THEN o contador SHALL mostrar "{restantes} de {photoLimitPerGuest}"
+   (semântica de filme restante, como na câmera descartável — DS §6 "7 de 10"), partindo do
+   último `photosRemaining` conhecido (persistido com a sessão) ou do limite do evento em
+   sessão nova.
 2. WHEN resta exatamente 1 pose THEN o anel do obturador SHALL ficar `accent` (único momento
    cromático — DS §6).
 3. WHEN as poses zeram THEN o obturador SHALL desabilitar (anel `editorial-border`) e a
