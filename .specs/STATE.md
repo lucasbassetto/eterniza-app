@@ -13,7 +13,6 @@
 
 ## Handoff
 
-- **Feature ativa:** `etapa-1-fundacao` — implementada e verificada (Verifier PASS, `validation.md`); commits f083aba..9309e07.
-- **Pendente:** UAT interativo com o usuário no Expo Go (AD-003): app abre, splash até fontes carregarem, tela com fundo canvas + título Archivo + corpo Cormorant, fontes distintas.
-- **Próximo passo:** usuário confirma UAT → fechar Etapa 1 e especificar Etapa 2 (componentes base).
-- **Notas:** projeto Expo SDK 57 em `src/app` (expo-router); tokens em `src/theme/theme.ts`; gate = `npx tsc --noEmit` + `npm run lint` + `npm test` (jest-expo). Adaptive icon do template mantido (Etapa 11).
+- **Etapa 1 (`etapa-1-fundacao`):** ✅ CONCLUÍDA — Verifier PASS + UAT aprovado (2026-07-14). Commits f083aba..c89ae5e.
+- **Feature ativa:** `etapa-2-componentes` — spec em elaboração, aguardando aprovação do usuário.
+- **Notas de ambiente:** teste em iPhone físico via `npx expo start --tunnel` (LAN bloqueada por firewall); Expo Go da App Store = SDK 54 (AD-006). Projeto em `src/app` (expo-router); tokens em `src/theme/theme.ts`; gate = `npx tsc --noEmit` + `npm run lint` + `npm test` (jest-expo). Adaptive icon do template mantido (Etapa 11).

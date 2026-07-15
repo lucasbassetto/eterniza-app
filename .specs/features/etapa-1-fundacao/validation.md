@@ -141,3 +141,20 @@ Observação menor (não bloqueante): `app.json:15` mantém `backgroundColor: "#
 **Issues found**: nenhum bloqueante. Nota: lógica de splash/fallback sem teste automatizado — aceito pelo escopo (AD-003 + Medium); revisitar quando houver infra de component-test (Etapa 2).
 
 **Next steps**: rodar o UAT interativo (4 itens acima) com o usuário no Expo Go para marcar os Success Criteria visuais.
+
+---
+
+## UAT Interativo — Resultado (2026-07-14)
+
+Executado pelo usuário em iPhone físico, via Expo Go (SDK 54) + `expo start --tunnel`.
+
+**Nota de percurso**: o primeiro UAT falhou por incompatibilidade de ambiente — o projeto estava no SDK 57 e o Expo Go da App Store suporta apenas SDK 54 (revisão da Apple pendente para 55+). Resolvido com downgrade do projeto para SDK 54 (commit `c89ae5e`, decisão AD-006), com todos os gates re-executados e verdes (expo-doctor 18/18, tsc, lint, 4/4 testes, bundle iOS via `expo export`).
+
+| # | Teste | Resultado |
+| --- | --- | --- |
+| 1 | App abre no Expo Go sem erro de rota | ✅ Confirmado pelo usuário |
+| 2 | Splash até fontes carregarem, sem "piscada" de fonte | ✅ Confirmado pelo usuário |
+| 3 | Tela: fundo canvas, "Eterniza" em Archivo, corpo em Cormorant, gutter 24 | ✅ Confirmado pelo usuário |
+| 4 | Fontes visivelmente distintas (serifa × grotesca) | ✅ Confirmado pelo usuário |
+
+**Overall final**: ✅ **PASS — Etapa 1 concluída** (automatizável + UAT). Critério "✅ Verificar" do ROADMAP cumprido.
