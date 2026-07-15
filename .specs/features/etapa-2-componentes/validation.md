@@ -178,3 +178,11 @@ Executado em estado descartável (mutação via edição → `npx jest <suite>` 
 **Issues found**: nenhum bloqueante. Notas: (1) tracking do label sem valor canônico no doc; (2) foco de acessibilidade `accent` sem implementação — sem AC correspondente e N/A no alvo iOS/toque atual.
 
 **Next steps**: rodar o UAT interativo (8 itens acima) com o usuário no Expo Go (`npx expo start --tunnel`, link "componentes →" na home) para fechar o Success Criterion "galeria confere com o DESIGN_SYSTEM.md".
+
+---
+
+## UAT Interativo — Resultado (2026-07-14)
+
+Executado pelo usuário em iPhone físico via Expo Go (tunnel), galeria `/dev/components` pelo link da home. Usuário aprovou e autorizou seguir ("Pode seguir").
+
+**Overall final**: ✅ **PASS — Etapa 2 concluída** (automatizável + UAT). Critério "✅ Verificar" do ROADMAP cumprido (galeria confere com o DESIGN_SYSTEM.md: cantos retos, sem sombra, botão outline 2px).

@@ -135,11 +135,11 @@ Toda tela futura (câmera, galeria, host) precisa dos mesmos blocos: texto tipog
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| COMP-01 | P1: Text | Execute | Verified (UAT pendente) — commit 20a31e6 |
-| COMP-02 | P1: Button | Execute | Verified (UAT pendente) — commit 1788d3a |
-| COMP-03 | P1: Input | Execute | Verified (UAT pendente) — commit 9f072bf |
-| COMP-04 | P1: Screen | Execute | Verified (UAT pendente) — commit e01d62c |
-| COMP-05 | P1: Galeria /dev/components | Execute | Verified (UAT pendente) — commit ba17503 |
+| COMP-01 | P1: Text | Execute | ✅ Verified (UAT ok) — commit 20a31e6 |
+| COMP-02 | P1: Button | Execute | ✅ Verified (UAT ok) — commit 1788d3a |
+| COMP-03 | P1: Input | Execute | ✅ Verified (UAT ok) — commit 9f072bf |
+| COMP-04 | P1: Screen | Execute | ✅ Verified (UAT ok) — commit e01d62c |
+| COMP-05 | P1: Galeria /dev/components | Execute | ✅ Verified (UAT ok) — commit ba17503 |
 
 **Coverage:** 5 total, 0 mapped to tasks (tasks implícitas no Execute — escopo Medium), 0 unmapped.
 
@@ -147,6 +147,6 @@ Toda tela futura (câmera, galeria, host) precisa dos mesmos blocos: texto tipog
 
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002)
 
-- [ ] **Galeria de componentes confere com o `DESIGN_SYSTEM.md`** (cantos retos, sem sombra, botão outline 2px) — UAT interativo com o usuário (AD-003).
-- [ ] Gate automatizado verde: `tsc --noEmit` + lint + testes de componente (estilos e comportamento por variante/estado).
-- [ ] Commits atômicos por componente (AD-005).
+- [x] **Galeria de componentes confere com o `DESIGN_SYSTEM.md`** (cantos retos, sem sombra, botão outline 2px) — UAT aprovado pelo usuário em 2026-07-14.
+- [x] Gate automatizado verde: `tsc --noEmit` + lint + 38 testes (Verifier PASS, sensor 4/4 killed — ver `validation.md`).
+- [x] Commits atômicos por componente (AD-005): 20a31e6, 1788d3a, 9f072bf, e01d62c, ba17503.
