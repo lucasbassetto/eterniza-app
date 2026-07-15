@@ -120,6 +120,6 @@ O app precisa da espinha dorsal de navegação antes de qualquer fluxo real: as 
 
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002, adaptado ao ambiente)
 
-- [ ] **URL com slug abre a tela certa com o slug lido** — automatizado via `renderRouter` + UAT no iPhone com `exp://<tunnel>/--/e/teste-slug` (o comando `uri-scheme open "eterniza://..."` literal fica para a Etapa 6, quando houver dev build).
-- [ ] Gate automatizado verde: `tsc --noEmit` + lint + testes de rota/navegação.
-- [ ] Commits atômicos (AD-005).
+- [x] **URL com slug abre a tela certa com o slug lido** — automatizado via `renderRouter`; UAT aprovado (2026-07-14). Comando literal `eterniza://` re-verificado na Etapa 6 (dev build).
+- [x] Gate automatizado verde: `tsc --noEmit` + lint + 55 testes (Verifier FAIL→fix→PASS, sensor 5/5 — ver `validation.md`).
+- [x] Commits atômicos (AD-005): 6c09f42, db69a24, 6917705, 4179496, f9fc748.

@@ -181,3 +181,11 @@ Executado em estado descartável (edição → `npx jest <suite>` → `git check
 **Traceability final**: NAV-01 ✅ Verified · NAV-02 ✅ Verified · NAV-03 ✅ Verified (automatizável) / ⏳ UAT (AC3) · NAV-04 ✅ Verified
 
 **Overall final (automatizável)**: ✅ **PASS** — pendente apenas o UAT interativo (AD-003).
+
+---
+
+## UAT Interativo — Resultado (2026-07-14)
+
+Usuário validou os fluxos esqueleto no iPhone e autorizou seguir para a Etapa 4 ("vamos para a etapa 4"). Observação registrada do usuário: estranhou a simplicidade visual — esclarecido que telas em esqueleto são a definição da Etapa 3 no roadmap; o visual chega nas Etapas 5–11 (AD-007).
+
+**Overall final**: ✅ **PASS — Etapa 3 concluída**. Nota: o comando literal `uri-scheme open eterniza://` permanece agendado para re-verificação na Etapa 6 (dev build), conforme assumption da spec.
