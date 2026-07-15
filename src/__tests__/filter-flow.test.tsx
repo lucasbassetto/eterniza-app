@@ -8,6 +8,7 @@ import { renderRouter } from 'expo-router/testing-library';
 import * as Haptics from 'expo-haptics';
 import * as SecureStore from 'expo-secure-store';
 
+import * as photosApi from '@/api/photos';
 import { queryClient } from '@/api/query-client';
 
 jest.mock('@/camera/filter-pipeline', () => ({
@@ -20,8 +21,11 @@ const { applyFilterToPhoto } = jest.requireMock('@/camera/filter-pipeline') as {
   applyFilterToPhoto: jest.Mock;
 };
 
-const { __resetVisionCamera } = jest.requireMock('react-native-vision-camera') as {
+const { __resetVisionCamera, __getLastCameraProps } = jest.requireMock(
+  'react-native-vision-camera',
+) as {
   __resetVisionCamera: () => void;
+  __getLastCameraProps: () => Record<string, unknown>;
 };
 
 const secureStoreMock = SecureStore as unknown as {
@@ -146,6 +150,37 @@ describe('Filtros na câmera (FILT-03/04/05)', () => {
       expect.objectContaining({ key: 'sepia' }),
     );
     expect(fetchMock.mock.calls[1][0]).toBe('http://test.local:8080/api/photos/upload');
+  });
+
+  it('o upload recebe a uri PROCESSADA, não a da câmera (FILT-05 AC1 — fiação)', async () => {
+    const spy = jest
+      .spyOn(photosApi, 'uploadPhoto')
+      .mockResolvedValue({ photoId: 'ph-1', message: 'ok', photosRemaining: 9 });
+    seedSession();
+    fetchMock.mockResolvedValueOnce(eventOk);
+    await openCamera();
+
+    await fireEvent.press(screen.getByTestId('filter-sepia'));
+    await fireEvent.press(screen.getByTestId('shutter'));
+    await waitFor(() => expect(screen.getByTestId('poses-counter')).toHaveTextContent('9 de 10'));
+
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ fileUri: 'file:///processed/sepia.jpg' }),
+    );
+    spy.mockRestore();
+  });
+
+  it('frame processor acoplado só quando o filtro ≠ Original (FILT-03 AC3 — fiação)', async () => {
+    seedSession();
+    fetchMock.mockResolvedValue(eventOk);
+    await openCamera();
+
+    expect(__getLastCameraProps().frameProcessor).toBeUndefined(); // Original: preview puro
+
+    await fireEvent.press(screen.getByTestId('filter-sepia'));
+    await waitFor(() =>
+      expect(__getLastCameraProps().frameProcessor).toEqual({ __mockSkiaFrameProcessor: true }),
+    );
   });
 
   it('filtro escolhido persiste entre poses (FILT-04 AC3)', async () => {

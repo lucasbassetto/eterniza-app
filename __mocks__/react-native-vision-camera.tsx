@@ -7,10 +7,16 @@ export const __takePhotoMock = jest.fn(async () => ({
   height: 3024,
 }));
 
-export const Camera = forwardRef(function MockCamera(_props: unknown, ref) {
+let lastCameraProps: Record<string, unknown> = {};
+
+export const Camera = forwardRef(function MockCamera(props: Record<string, unknown>, ref) {
+  lastCameraProps = props;
   useImperativeHandle(ref, () => ({ takePhoto: __takePhotoMock }));
   return null;
 });
+
+/** Última leva de props passada ao <Camera> — permite asserir a fiação (ex.: frameProcessor). */
+export const __getLastCameraProps = () => lastCameraProps;
 
 export const useCameraPermission = jest.fn(() => ({
   hasPermission: true,
@@ -24,8 +30,8 @@ export const useCameraDevice = jest.fn((position: string) => ({
 
 export const useCameraFormat = jest.fn(() => undefined);
 
-// Frame processor Skia (GPU) — inerte no jest; fluidez/visual = UAT
-export const useSkiaFrameProcessor = jest.fn(() => undefined);
+// Frame processor Skia (GPU) — inerte no jest (sentinela para asserir fiação); fluidez/visual = UAT
+export const useSkiaFrameProcessor = jest.fn(() => ({ __mockSkiaFrameProcessor: true }));
 
 export const __resetVisionCamera = () => {
   __takePhotoMock.mockClear();
