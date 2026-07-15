@@ -125,7 +125,7 @@ Nenhuma tela fala com o backend ainda. Antes dos fluxos reais (convidado na Etap
 |---|---|---|---|
 | API-01 | P1: Cliente da API | Execute | Verified — commit 3341a00 |
 | API-02 | P1: TanStack Query | Execute | Verified — commit 601cc9e |
-| API-03 | P1: Login com sessão persistida | Execute | Verified (UAT pendente) — commit 225a9c2 |
+| API-03 | P1: Login com sessão persistida | Execute | Verified + UAT aprovado (2026-07-14) — commit 225a9c2 |
 | API-04 | P1: Re-login automático | Execute | Verified — commit 29f512f + fix |
 
 **Coverage:** 4 total, 0 mapped to tasks (tasks implícitas no Execute — escopo Medium), 0 unmapped.
@@ -134,6 +134,6 @@ Nenhuma tela fala com o backend ainda. Antes dos fluxos reais (convidado na Etap
 
 ## Success Criteria (= "✅ Verificar" do ROADMAP, por AD-002)
 
-- [ ] **Com o backend rodando, logar de verdade e ver o token persistir entre reaberturas do app** — UAT interativo no iPhone (AD-003).
-- [ ] Gate automatizado verde: `tsc --noEmit` + lint + testes (client, re-login, fluxo de login mockado).
-- [ ] Commits atômicos (AD-005).
+- [x] **Com o backend rodando, logar de verdade e ver o token persistir entre reaberturas do app** — UAT aprovado no iPhone (2026-07-14). Bloqueios de ambiente resolvidos: firewall (porta 8080 inbound), IP correto no `.env`, e **permissão "Rede Local" do iOS para o Expo Go** (Safari alcançava a API mas o fetch do app falhava até ativar o toggle).
+- [x] Gate automatizado verde: `tsc --noEmit` + lint + testes (client, re-login, fluxo de login mockado).
+- [x] Commits atômicos (AD-005).
