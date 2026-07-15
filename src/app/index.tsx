@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing, type } from '@/theme/theme';
@@ -10,6 +11,10 @@ export default function Index() {
         A câmera descartável digital para casamentos. Fotografe, guarde o segredo e
         reviva tudo na revelação.
       </Text>
+      {/* Link temporário para o UAT da galeria — remover na Etapa 3 (navegação real) */}
+      <Link href="/dev/components" style={[type.caption, styles.devLink]}>
+        componentes →
+      </Link>
     </View>
   );
 }
@@ -27,5 +32,9 @@ const styles = StyleSheet.create({
   },
   body: {
     color: colors.inkMuted,
+  },
+  devLink: {
+    color: colors.inkMuted,
+    textDecorationLine: 'underline',
   },
 });
