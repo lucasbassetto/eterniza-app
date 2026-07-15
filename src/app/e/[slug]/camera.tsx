@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Easing, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Camera,
@@ -28,6 +28,19 @@ export default function GuestCamera() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const blinkOpacity = useRef(new Animated.Value(0)).current;
+
+  // A "piscada" do visor: preto instantâneo + reabertura em fade (DS §7 — fast, easeOutCubic)
+  const runShutterBlink = () => {
+    blinkOpacity.setValue(1);
+    Animated.timing(blinkOpacity, {
+      toValue: 0,
+      duration: 220,
+      delay: 60, // visor fica fechado por um instante — o "clack" do obturador
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  };
 
   const { hasPermission, requestPermission } = useCameraPermission();
   const [permissionResolved, setPermissionResolved] = useState(hasPermission);
@@ -113,6 +126,7 @@ export default function GuestCamera() {
     if (!cameraRef.current || capturing) return;
     setCapturing(true);
     setUploadError(null);
+    runShutterBlink();
     try {
       const photo = await cameraRef.current.takePhoto();
       upload.mutate(photo.path);
@@ -197,6 +211,13 @@ export default function GuestCamera() {
         />
       ) : null}
 
+      {/* Piscada do obturador — cobre o preview, não a UI */}
+      <Animated.View
+        testID="shutter-blink"
+        pointerEvents="none"
+        style={[StyleSheet.absoluteFill, styles.blink, { opacity: blinkOpacity }]}
+      />
+
       <SafeAreaView style={styles.overlay} pointerEvents="box-none">
         <View style={styles.top}>
           <Text variant="caption" style={styles.eventName}>
@@ -229,12 +250,16 @@ export default function GuestCamera() {
               onPress={takePhoto}
               style={[styles.shutterRing, { borderColor: ringColor }]}
             >
-              <View
-                style={[
-                  styles.shutterCenter,
-                  (shutter === 'exhausted' || shutter === 'busy') && styles.shutterCenterDisabled,
-                ]}
-              />
+              {({ pressed }) => (
+                <View
+                  style={[
+                    styles.shutterCenter,
+                    (shutter === 'exhausted' || shutter === 'busy') &&
+                      styles.shutterCenterDisabled,
+                    pressed && styles.shutterCenterPressed, // clique mecânico
+                  ]}
+                />
+              )}
             </Pressable>
             <View style={styles.controlSide}>
               <Pressable
@@ -341,6 +366,12 @@ const styles = StyleSheet.create({
   },
   shutterCenterDisabled: {
     backgroundColor: colors.editorialBorder,
+  },
+  shutterCenterPressed: {
+    transform: [{ scale: 0.88 }],
+  },
+  blink: {
+    backgroundColor: colors.editorial,
   },
   flip: {
     color: colors.editorialText,
