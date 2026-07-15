@@ -184,10 +184,10 @@ estados; persistência com secure store mockado; suíte E2E tela↔upload↔cont
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| CAM-01 | P1: Dev build funcionando | Execute | Not started |
-| CAM-02 | P1: Câmera com preview e captura | Execute | Not started |
-| CAM-03 | P1: Upload real com erros tratados | Execute | Not started |
-| CAM-04 | P1: Contador de poses e obturador | Execute | Not started |
+| CAM-01 | P1: Dev build funcionando | Execute | Implementado (config) — commit 6fd8262; build/UAT pendente no Mac |
+| CAM-02 | P1: Câmera com preview e captura | Execute | Verified (código) — commit 3aa8283; captura real = UAT |
+| CAM-03 | P1: Upload real com erros tratados | Execute | Verified — commit 9524005 |
+| CAM-04 | P1: Contador de poses e obturador | Execute | Verified — commit 0aa8d66 + 3aa8283 |
 
 **Coverage:** 4 total, 0 mapped to tasks (tasks implícitas no Execute), 0 unmapped.
 
@@ -213,6 +213,8 @@ estados; persistência com secure store mockado; suíte E2E tela↔upload↔cont
       do evento de teste e observar o estado esgotado sem nenhum erro de servidor.
 - [ ] Deep link `eterniza://e/{slug}` abre o convite no dev build — UAT (fecha a pendência da
       Etapa 3).
-- [ ] Gate automatizado verde: `tsc --noEmit` + lint + testes (upload, contador, gating,
-      permissões mockadas).
-- [ ] Commits atômicos (AD-005).
+- [x] Gate automatizado verde: `tsc --noEmit` + lint + 114/114 testes. Verificação com sensor
+      6/6 (lastPose, isLimitError amplo, uri sem file://, pose gasta em falha, obturador sem
+      disabled, sem persistência — todas detectadas). Verificação inline (agente Verifier
+      indisponível por limite de sessão).
+- [x] Commits atômicos (AD-005): 6fd8262, 9524005, 0aa8d66, 3aa8283.
