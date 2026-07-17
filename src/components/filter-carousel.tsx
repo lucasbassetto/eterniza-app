@@ -1,4 +1,5 @@
 import { Canvas, ColorMatrix, Image as SkiaImage, useImage } from '@shopify/react-native-skia';
+import * as Haptics from 'expo-haptics';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { FILTERS, type CameraFilter } from '@/camera/filters';
@@ -27,6 +28,10 @@ export function FilterCarousel({ selectedKey, onSelect, disabled = false }: Filt
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.row}
+      // "fast" encurta a desaceleração — janela em que o ScrollView captura
+      // toques dos filhos (tap-to-stop) fica mínima
+      decelerationRate="fast"
+      keyboardShouldPersistTaps="handled"
     >
       {FILTERS.map((filter) => {
         const active = filter.key === selectedKey;
@@ -38,10 +43,21 @@ export function FilterCarousel({ selectedKey, onSelect, disabled = false }: Filt
             accessibilityLabel={`Filtro ${filter.name}`}
             accessibilityState={{ selected: active, disabled }}
             disabled={disabled}
-            onPress={() => onSelect(filter)}
-            style={[styles.item, disabled && styles.itemDisabled]}
+            onPress={() => {
+              Haptics.selectionAsync().catch(() => {});
+              onSelect(filter);
+            }}
+            style={({ pressed }) => [
+              styles.item,
+              disabled && styles.itemDisabled,
+              pressed && styles.itemPressed,
+            ]}
           >
-            <View style={[styles.ring, active && styles.ringActive]}>
+            {/* pointerEvents=none: a view nativa do Canvas Skia 2.2.12 cai na
+                interop layer da new arch e o iOS DESCARTA o toque que nasce
+                nela (skia#3388, corrigido só na 2.2.20+) — fora do hit-testing,
+                o toque nasce no próprio Pressable */}
+            <View pointerEvents="none" style={[styles.ring, active && styles.ringActive]}>
               <Canvas style={styles.thumb}>
                 {sample ? (
                   <SkiaImage
@@ -84,6 +100,9 @@ const styles = StyleSheet.create({
   },
   itemDisabled: {
     opacity: 0.4,
+  },
+  itemPressed: {
+    opacity: 0.6,
   },
   // Anel do ativo: 1px editorial-text (DS §6); gap para o anel "respirar"
   ring: {

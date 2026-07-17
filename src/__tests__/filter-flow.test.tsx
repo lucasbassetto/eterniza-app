@@ -112,7 +112,7 @@ describe('Filtros na câmera (FILT-03/04/05)', () => {
     expect(selectedOf('sepia')).toBe(false);
   });
 
-  it('tocar num filtro ativa o anel e desativa o anterior (FILT-04 AC2)', async () => {
+  it('tocar num filtro ativa o anel, desativa o anterior e dá o tick háptico (FILT-04 AC2)', async () => {
     seedSession();
     fetchMock.mockResolvedValue(eventOk);
     await openCamera();
@@ -121,6 +121,7 @@ describe('Filtros na câmera (FILT-03/04/05)', () => {
 
     expect(selectedOf('sepia')).toBe(true);
     expect(selectedOf('original')).toBe(false);
+    expect(Haptics.selectionAsync).toHaveBeenCalled();
   });
 
   it('foto com Original: pipeline em bypass, upload recebe a uri da câmera (FILT-05 AC2)', async () => {
