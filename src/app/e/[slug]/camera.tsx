@@ -12,6 +12,7 @@ import {
   useCameraPermission,
   useSkiaFrameProcessor,
 } from 'react-native-vision-camera';
+import { useSharedValue } from 'react-native-worklets-core';
 
 import { ApiError, NetworkError } from '@/api/client';
 import { getEventBySlug } from '@/api/events';
@@ -19,7 +20,7 @@ import { getGuestSession, updatePhotosRemaining, type GuestSession } from '@/api
 import { uploadPhoto } from '@/api/photos';
 import { isLimitError, shutterStateFor } from '@/api/poses';
 import { applyFilterToPhoto } from '@/camera/filter-pipeline';
-import { DEFAULT_FILTER, isOriginal } from '@/camera/filters';
+import { DEFAULT_FILTER, type CameraFilter } from '@/camera/filters';
 import { Button } from '@/components/button';
 import { FilterCarousel } from '@/components/filter-carousel';
 import { Text } from '@/components/text';
@@ -72,19 +73,21 @@ export default function GuestCamera() {
     { fps: 30 },
   ]);
 
-  // Preview ao vivo com a matriz do filtro na GPU (FILT-03); Original dispensa
-  // o frame processor — preview idêntico ao da Etapa 6. O Paint é criado uma
-  // única vez por troca de filtro (criá-lo dentro do worklet alocaria objetos
-  // Skia a cada frame).
-  const filterPaint = useMemo(() => {
-    const paint = Skia.Paint();
-    paint.setColorFilter(Skia.ColorFilter.MakeMatrix(selectedFilter.matrix));
-    return paint;
-  }, [selectedFilter]);
+  // Preview ao vivo com a matriz do filtro na GPU (FILT-03). O frame processor
+  // é criado UMA vez e fica SEMPRE anexado (Original = matriz identidade):
+  // anexar/desanexar ou recriá-lo a cada troca reconfigura a sessão nativa da
+  // câmera e congela o app (vision-camera#3606). Trocar de filtro é só uma
+  // escrita no shared value que o worklet lê — nenhuma reconfiguração.
+  const initialPaint = useMemo(() => makeFilterPaint(DEFAULT_FILTER), []);
+  const filterPaint = useSharedValue(initialPaint);
+  const selectFilter = (filter: CameraFilter) => {
+    filterPaint.value = makeFilterPaint(filter);
+    setSelectedFilter(filter);
+  };
   const frameProcessor = useSkiaFrameProcessor(
     (frame) => {
       'worklet';
-      frame.render(filterPaint);
+      frame.render(filterPaint.value);
     },
     [filterPaint],
   );
@@ -236,7 +239,7 @@ export default function GuestCamera() {
           // "balanced": mesma resolução máxima do format, mas sem o pipeline de
           // processamento pesado do "quality" (que atrasava a captura em ~1s+)
           photoQualityBalance="balanced"
-          frameProcessor={isOriginal(selectedFilter) ? undefined : frameProcessor}
+          frameProcessor={frameProcessor}
           isActive
           photo
         />
@@ -273,7 +276,7 @@ export default function GuestCamera() {
 
           <FilterCarousel
             selectedKey={selectedFilter.key}
-            onSelect={setSelectedFilter}
+            onSelect={selectFilter}
             disabled={shutter === 'exhausted'}
           />
 
@@ -315,6 +318,13 @@ export default function GuestCamera() {
       </SafeAreaView>
     </Shell>
   );
+}
+
+/** Paint com a matriz do filtro, criado no JS uma vez por seleção (nunca por frame). */
+function makeFilterPaint(filter: CameraFilter) {
+  const paint = Skia.Paint();
+  paint.setColorFilter(Skia.ColorFilter.MakeMatrix(filter.matrix));
+  return paint;
 }
 
 /** Shell editorial full-bleed (sem o gutter do <Screen> — o preview domina, a UI recua). */

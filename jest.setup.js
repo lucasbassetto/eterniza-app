@@ -15,3 +15,4 @@ jest.mock('react-native-vision-camera');
 // pipeline registra o mock manual dela por cima quando precisa dos helpers.
 jest.mock('@shopify/react-native-skia');
 jest.mock('expo-haptics');
+jest.mock('react-native-worklets-core');

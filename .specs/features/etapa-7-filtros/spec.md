@@ -113,7 +113,10 @@ que a foto será.
 1. WHEN um filtro está ativo THEN o preview SHALL renderizar cada frame com a matriz do
    filtro aplicada (GPU), fluido a ≥30fps — **UAT (critério do roadmap)**.
 2. WHEN troco de filtro no carrossel THEN o preview SHALL mudar instantaneamente.
-3. WHEN `Original` está ativo THEN o preview SHALL ser idêntico ao da Etapa 6.
+3. WHEN `Original` está ativo THEN o preview SHALL renderizar com a matriz identidade
+   (visual igual ao da Etapa 6). *(Revisado no UAT: o frame processor fica SEMPRE anexado —
+   anexar/desanexar ao alternar Original↔filtro reconfigura a sessão nativa e congela o app,
+   vision-camera#3606; a troca de filtro é uma escrita em shared value, sem recriar nada.)*
 4. WHEN a câmera vira (frontal/traseira) THEN o filtro ativo SHALL permanecer.
 
 **Independent Test**: seleção→estado testável com mocks; fluidez e fidelidade visual = UAT.

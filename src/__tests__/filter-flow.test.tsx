@@ -10,6 +10,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import * as photosApi from '@/api/photos';
 import { queryClient } from '@/api/query-client';
+import { FILTERS } from '@/camera/filters';
 
 jest.mock('@/camera/filter-pipeline', () => ({
   applyFilterToPhoto: jest.fn(async (uri: string, filter: { key: string }) =>
@@ -170,16 +171,26 @@ describe('Filtros na câmera (FILT-03/04/05)', () => {
     spy.mockRestore();
   });
 
-  it('frame processor acoplado só quando o filtro ≠ Original (FILT-03 AC3 — fiação)', async () => {
+  it('frame processor SEMPRE acoplado; trocar filtro só troca o paint (FILT-03 AC3 — fiação)', async () => {
+    // Anexar/desanexar o processor reconfigura a sessão nativa e congela o app
+    // (vision-camera#3606) — Original roda com a matriz identidade.
+    const { Skia } = jest.requireMock('@shopify/react-native-skia') as {
+      Skia: { ColorFilter: { MakeMatrix: jest.Mock } };
+    };
     seedSession();
     fetchMock.mockResolvedValue(eventOk);
     await openCamera();
 
-    expect(__getLastCameraProps().frameProcessor).toBeUndefined(); // Original: preview puro
+    expect(__getLastCameraProps().frameProcessor).toEqual({ __mockSkiaFrameProcessor: true });
 
+    Skia.ColorFilter.MakeMatrix.mockClear();
     await fireEvent.press(screen.getByTestId('filter-sepia'));
-    await waitFor(() =>
-      expect(__getLastCameraProps().frameProcessor).toEqual({ __mockSkiaFrameProcessor: true }),
+
+    // continua o MESMO processor anexado…
+    expect(__getLastCameraProps().frameProcessor).toEqual({ __mockSkiaFrameProcessor: true });
+    // …e o paint novo foi construído com a matriz da Sépia
+    expect(Skia.ColorFilter.MakeMatrix).toHaveBeenCalledWith(
+      FILTERS.find((f) => f.key === 'sepia')!.matrix,
     );
   });
 
