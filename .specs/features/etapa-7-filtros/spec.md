@@ -108,15 +108,18 @@ foto e miniaturas usarem exatamente a mesma definição.
 **User Story**: Como convidado, quero ver a festa já com o filtro no visor — o que vejo é o
 que a foto será.
 
-**Acceptance Criteria**:
+**Acceptance Criteria** *(revisados no UAT de 2026-07-16 — AD-010: o `useSkiaFrameProcessor`
+do VisionCamera v4 é experimental e congela o app na new architecture, tanto ao anexar quanto
+sempre-anexado (vision-camera#3606 e #3517, reproduzível no app de exemplo). O preview ao vivo
+com a matriz exata fica DESCARTADO até o upstream estabilizar; o preview passa a ser o "véu de
+filme": preview nativo da Etapa 6 + camada rgba com o tom do filtro. O efeito EXATO permanece
+nas miniaturas do carrossel e na foto final)*:
 
-1. WHEN um filtro está ativo THEN o preview SHALL renderizar cada frame com a matriz do
-   filtro aplicada (GPU), fluido a ≥30fps — **UAT (critério do roadmap)**.
-2. WHEN troco de filtro no carrossel THEN o preview SHALL mudar instantaneamente.
-3. WHEN `Original` está ativo THEN o preview SHALL renderizar com a matriz identidade
-   (visual igual ao da Etapa 6). *(Revisado no UAT: o frame processor fica SEMPRE anexado —
-   anexar/desanexar ao alternar Original↔filtro reconfigura a sessão nativa e congela o app,
-   vision-camera#3606; a troca de filtro é uma escrita em shared value, sem recriar nada.)*
+1. WHEN um filtro ≠ `Original` está ativo THEN o preview SHALL exibir o véu do filme (tint
+   rgba do filtro) sobre o preview nativo, sem custo por frame — fluidez da Etapa 6 intacta.
+2. WHEN troco de filtro no carrossel THEN o véu SHALL mudar instantaneamente.
+3. WHEN `Original` está ativo THEN o preview SHALL ser o nativo puro, idêntico ao da Etapa 6
+   (sem véu, sem frame processor).
 4. WHEN a câmera vira (frontal/traseira) THEN o filtro ativo SHALL permanecer.
 
 **Independent Test**: seleção→estado testável com mocks; fluidez e fidelidade visual = UAT.

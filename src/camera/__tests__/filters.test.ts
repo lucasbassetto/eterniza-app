@@ -62,4 +62,11 @@ describe('Filtros de lançamento (FILT-02)', () => {
     const keys = FILTERS.map((f) => f.key);
     expect(new Set(keys).size).toBe(keys.length);
   });
+
+  it('véu do visor: Original sem véu, demais com rgba válido (FILT-03 revisado)', () => {
+    expect(FILTERS[0].previewTint).toBeNull();
+    for (const filter of FILTERS.slice(1)) {
+      expect(filter.previewTint).toMatch(/^rgba\(\d+,\d+,\d+,0\.\d+\)$/);
+    }
+  });
 });

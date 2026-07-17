@@ -1,8 +1,7 @@
-import { Skia } from '@shopify/react-native-skia';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { Redirect, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Animated, Easing, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -10,9 +9,7 @@ import {
   useCameraDevice,
   useCameraFormat,
   useCameraPermission,
-  useSkiaFrameProcessor,
 } from 'react-native-vision-camera';
-import { useSharedValue } from 'react-native-worklets-core';
 
 import { ApiError, NetworkError } from '@/api/client';
 import { getEventBySlug } from '@/api/events';
@@ -20,7 +17,7 @@ import { getGuestSession, updatePhotosRemaining, type GuestSession } from '@/api
 import { uploadPhoto } from '@/api/photos';
 import { isLimitError, shutterStateFor } from '@/api/poses';
 import { applyFilterToPhoto } from '@/camera/filter-pipeline';
-import { DEFAULT_FILTER, type CameraFilter } from '@/camera/filters';
+import { DEFAULT_FILTER } from '@/camera/filters';
 import { Button } from '@/components/button';
 import { FilterCarousel } from '@/components/filter-carousel';
 import { Text } from '@/components/text';
@@ -63,34 +60,19 @@ export default function GuestCamera() {
   }, [hasPermission]);
 
   const device = useCameraDevice(position);
-  // Foto na resolução máxima (regra 4 do brief); vídeo em 1080p — o preview usa
-  // o stream de vídeo (otimizar só a foto deixa o preview borrado), mas o frame
-  // processor Skia redesenha CADA frame do stream: em "max" (4K) o preview
-  // filtrado engasga; 1080p é indistinguível na tela e roda fluido
+  // Foto na resolução máxima (regra 4 do brief) E vídeo máximo/30fps: o preview
+  // usa o stream de vídeo do formato — otimizar só a foto deixa o preview borrado
   const format = useCameraFormat(device, [
     { photoResolution: 'max' },
-    { videoResolution: { width: 1920, height: 1080 } },
+    { videoResolution: 'max' },
     { fps: 30 },
   ]);
 
-  // Preview ao vivo com a matriz do filtro na GPU (FILT-03). O frame processor
-  // é criado UMA vez e fica SEMPRE anexado (Original = matriz identidade):
-  // anexar/desanexar ou recriá-lo a cada troca reconfigura a sessão nativa da
-  // câmera e congela o app (vision-camera#3606). Trocar de filtro é só uma
-  // escrita no shared value que o worklet lê — nenhuma reconfiguração.
-  const initialPaint = useMemo(() => makeFilterPaint(DEFAULT_FILTER), []);
-  const filterPaint = useSharedValue(initialPaint);
-  const selectFilter = (filter: CameraFilter) => {
-    filterPaint.value = makeFilterPaint(filter);
-    setSelectedFilter(filter);
-  };
-  const frameProcessor = useSkiaFrameProcessor(
-    (frame) => {
-      'worklet';
-      frame.render(filterPaint.value);
-    },
-    [filterPaint],
-  );
+  // FILT-03 (revisado no UAT): o preview do filtro é o "véu de filme" —
+  // preview NATIVO da Etapa 6 + camada rgba com o tom do filtro. O
+  // useSkiaFrameProcessor do VisionCamera é experimental e congela o app na
+  // new arch (vision-camera#3606/#3517); o efeito exato fica nas miniaturas
+  // do carrossel e na foto final (pipeline offscreen, caminho independente).
 
   const eventQuery = useQuery({
     queryKey: ['event', slug],
@@ -239,9 +221,17 @@ export default function GuestCamera() {
           // "balanced": mesma resolução máxima do format, mas sem o pipeline de
           // processamento pesado do "quality" (que atrasava a captura em ~1s+)
           photoQualityBalance="balanced"
-          frameProcessor={frameProcessor}
           isActive
           photo
+        />
+      ) : null}
+
+      {/* Véu do filme: tom do filtro sobre o preview nativo (FILT-03) */}
+      {selectedFilter.previewTint ? (
+        <View
+          testID="filter-tint"
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, { backgroundColor: selectedFilter.previewTint }]}
         />
       ) : null}
 
@@ -276,7 +266,7 @@ export default function GuestCamera() {
 
           <FilterCarousel
             selectedKey={selectedFilter.key}
-            onSelect={selectFilter}
+            onSelect={setSelectedFilter}
             disabled={shutter === 'exhausted'}
           />
 
@@ -318,13 +308,6 @@ export default function GuestCamera() {
       </SafeAreaView>
     </Shell>
   );
-}
-
-/** Paint com a matriz do filtro, criado no JS uma vez por seleção (nunca por frame). */
-function makeFilterPaint(filter: CameraFilter) {
-  const paint = Skia.Paint();
-  paint.setColorFilter(Skia.ColorFilter.MakeMatrix(filter.matrix));
-  return paint;
 }
 
 /** Shell editorial full-bleed (sem o gutter do <Screen> — o preview domina, a UI recua). */

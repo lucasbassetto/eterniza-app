@@ -15,6 +15,13 @@ export interface CameraFilter {
   name: string;
   /** Matriz de cor 4×5 (20 elementos). */
   matrix: number[];
+  /**
+   * "Véu de filme" do visor (rgba): aproximação do tom do filtro sobre o
+   * preview nativo. O efeito EXATO aparece nas miniaturas e na foto final —
+   * o preview via Skia frame processor congela o app na new arch
+   * (vision-camera#3606/#3517, experimental). `null` = sem véu (Original).
+   */
+  previewTint: string | null;
 }
 
 // Pesos de luminância Rec. 709
@@ -77,12 +84,12 @@ const VINTAGE_94 = [
 ];
 
 export const FILTERS: CameraFilter[] = [
-  { key: 'original', name: 'Original', matrix: IDENTITY },
-  { key: 'nupcial', name: 'Nupcial', matrix: NUPCIAL },
-  { key: 'ouro', name: 'Ouro', matrix: OURO },
-  { key: 'sepia', name: 'Sépia', matrix: SEPIA },
-  { key: 'pb-classico', name: 'P&B Clássico', matrix: PB_CLASSICO },
-  { key: 'vintage-94', name: 'Vintage 94', matrix: VINTAGE_94 },
+  { key: 'original', name: 'Original', matrix: IDENTITY, previewTint: null },
+  { key: 'nupcial', name: 'Nupcial', matrix: NUPCIAL, previewTint: 'rgba(255,246,238,0.10)' },
+  { key: 'ouro', name: 'Ouro', matrix: OURO, previewTint: 'rgba(255,196,110,0.20)' },
+  { key: 'sepia', name: 'Sépia', matrix: SEPIA, previewTint: 'rgba(122,85,48,0.30)' },
+  { key: 'pb-classico', name: 'P&B Clássico', matrix: PB_CLASSICO, previewTint: 'rgba(160,160,160,0.35)' },
+  { key: 'vintage-94', name: 'Vintage 94', matrix: VINTAGE_94, previewTint: 'rgba(255,220,180,0.18)' },
 ];
 
 export const DEFAULT_FILTER = FILTERS[0]; // Original
