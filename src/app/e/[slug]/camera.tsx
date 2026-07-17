@@ -2,7 +2,7 @@ import { Skia } from '@shopify/react-native-skia';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { Redirect, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Animated, Easing, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -62,25 +62,31 @@ export default function GuestCamera() {
   }, [hasPermission]);
 
   const device = useCameraDevice(position);
-  // Foto na resolução máxima (regra 4 do brief) E vídeo máximo/30fps: o preview
-  // usa o stream de vídeo do formato — otimizar só a foto deixa o preview borrado
+  // Foto na resolução máxima (regra 4 do brief); vídeo em 1080p — o preview usa
+  // o stream de vídeo (otimizar só a foto deixa o preview borrado), mas o frame
+  // processor Skia redesenha CADA frame do stream: em "max" (4K) o preview
+  // filtrado engasga; 1080p é indistinguível na tela e roda fluido
   const format = useCameraFormat(device, [
     { photoResolution: 'max' },
-    { videoResolution: 'max' },
+    { videoResolution: { width: 1920, height: 1080 } },
     { fps: 30 },
   ]);
 
   // Preview ao vivo com a matriz do filtro na GPU (FILT-03); Original dispensa
-  // o frame processor — preview idêntico ao da Etapa 6
-  const filterMatrix = selectedFilter.matrix;
+  // o frame processor — preview idêntico ao da Etapa 6. O Paint é criado uma
+  // única vez por troca de filtro (criá-lo dentro do worklet alocaria objetos
+  // Skia a cada frame).
+  const filterPaint = useMemo(() => {
+    const paint = Skia.Paint();
+    paint.setColorFilter(Skia.ColorFilter.MakeMatrix(selectedFilter.matrix));
+    return paint;
+  }, [selectedFilter]);
   const frameProcessor = useSkiaFrameProcessor(
     (frame) => {
       'worklet';
-      const paint = Skia.Paint();
-      paint.setColorFilter(Skia.ColorFilter.MakeMatrix(filterMatrix));
-      frame.render(paint);
+      frame.render(filterPaint);
     },
-    [filterMatrix],
+    [filterPaint],
   );
 
   const eventQuery = useQuery({

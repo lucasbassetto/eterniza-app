@@ -1,0 +1,105 @@
+diff --git a/node_modules/react-native-vision-camera/lib/commonjs/skia/SkiaCameraCanvas.js b/node_modules/react-native-vision-camera/lib/commonjs/skia/SkiaCameraCanvas.js
+index 157c3ac..a87017a 100644
+--- a/node_modules/react-native-vision-camera/lib/commonjs/skia/SkiaCameraCanvas.js
++++ b/node_modules/react-native-vision-camera/lib/commonjs/skia/SkiaCameraCanvas.js
+@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
+ });
+ exports.SkiaCameraCanvas = void 0;
+ var _react = _interopRequireWildcard(require("react"));
++var _reactNative = require("react-native");
+ var _ReanimatedProxy = require("../dependencies/ReanimatedProxy");
+ var _SkiaProxy = require("../dependencies/SkiaProxy");
+ function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+@@ -43,17 +44,21 @@ function SkiaCameraCanvasImpl({
+     setWidth(Math.round(layout.width));
+     setHeight(Math.round(layout.height));
+   }, []);
+-  return /*#__PURE__*/_react.default.createElement(_SkiaProxy.SkiaProxy.Canvas, _extends({}, props, {
++  // Skia's <Canvas /> does not support onLayout on the new architecture — measure
++  // with a plain View wrapper instead and let the Canvas fill it absolutely.
++  return /*#__PURE__*/_react.default.createElement(_reactNative.View, _extends({}, props, {
+     onLayout: onLayout,
+     pointerEvents: "none"
+-  }), children, /*#__PURE__*/_react.default.createElement(_SkiaProxy.SkiaProxy.Image, {
++  }), /*#__PURE__*/_react.default.createElement(_SkiaProxy.SkiaProxy.Canvas, {
++    style: _reactNative.StyleSheet.absoluteFill
++  }, children, /*#__PURE__*/_react.default.createElement(_SkiaProxy.SkiaProxy.Image, {
+     x: 0,
+     y: 0,
+     width: width,
+     height: height,
+     fit: resizeMode,
+     image: texture
+-  }));
++  })));
+ }
+ const SkiaCameraCanvas = exports.SkiaCameraCanvas = /*#__PURE__*/_react.default.memo(SkiaCameraCanvasImpl);
+ //# sourceMappingURL=SkiaCameraCanvas.js.map
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera/lib/module/skia/SkiaCameraCanvas.js b/node_modules/react-native-vision-camera/lib/module/skia/SkiaCameraCanvas.js
+index a3b5a4a..5bde776 100644
+--- a/node_modules/react-native-vision-camera/lib/module/skia/SkiaCameraCanvas.js
++++ b/node_modules/react-native-vision-camera/lib/module/skia/SkiaCameraCanvas.js
+@@ -1,5 +1,6 @@
+ function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+ import React, { useCallback, useState } from 'react';
++import { StyleSheet, View } from 'react-native';
+ import { ReanimatedProxy } from '../dependencies/ReanimatedProxy';
+ import { SkiaProxy } from '../dependencies/SkiaProxy';
+ function SkiaCameraCanvasImpl({
+@@ -35,17 +36,21 @@ function SkiaCameraCanvasImpl({
+     setWidth(Math.round(layout.width));
+     setHeight(Math.round(layout.height));
+   }, []);
+-  return /*#__PURE__*/React.createElement(SkiaProxy.Canvas, _extends({}, props, {
++  // Skia's <Canvas /> does not support onLayout on the new architecture — measure
++  // with a plain View wrapper instead and let the Canvas fill it absolutely.
++  return /*#__PURE__*/React.createElement(View, _extends({}, props, {
+     onLayout: onLayout,
+     pointerEvents: "none"
+-  }), children, /*#__PURE__*/React.createElement(SkiaProxy.Image, {
++  }), /*#__PURE__*/React.createElement(SkiaProxy.Canvas, {
++    style: StyleSheet.absoluteFill
++  }, children, /*#__PURE__*/React.createElement(SkiaProxy.Image, {
+     x: 0,
+     y: 0,
+     width: width,
+     height: height,
+     fit: resizeMode,
+     image: texture
+-  }));
++  })));
+ }
+ export const SkiaCameraCanvas = /*#__PURE__*/React.memo(SkiaCameraCanvasImpl);
+ //# sourceMappingURL=SkiaCameraCanvas.js.map
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera/src/skia/SkiaCameraCanvas.tsx b/node_modules/react-native-vision-camera/src/skia/SkiaCameraCanvas.tsx
+index 56d4e0e..cf6c0cb 100644
+--- a/node_modules/react-native-vision-camera/src/skia/SkiaCameraCanvas.tsx
++++ b/node_modules/react-native-vision-camera/src/skia/SkiaCameraCanvas.tsx
+@@ -1,4 +1,5 @@
+ import React, { useCallback, useState } from 'react'
++import { StyleSheet, View } from 'react-native'
+ import type { LayoutChangeEvent, ViewProps } from 'react-native'
+ import type { CameraProps } from '../types/CameraProps'
+ import type { ISharedValue } from 'react-native-worklets-core'
+@@ -46,11 +47,15 @@ function SkiaCameraCanvasImpl({ offscreenTextures, resizeMode = 'cover', childre
+     setHeight(Math.round(layout.height))
+   }, [])
+ 
++  // Skia's <Canvas /> does not support onLayout on the new architecture — measure
++  // with a plain View wrapper instead and let the Canvas fill it absolutely.
+   return (
+-    <SkiaProxy.Canvas {...props} onLayout={onLayout} pointerEvents="none">
+-      {children}
+-      <SkiaProxy.Image x={0} y={0} width={width} height={height} fit={resizeMode} image={texture} />
+-    </SkiaProxy.Canvas>
++    <View {...props} onLayout={onLayout} pointerEvents="none">
++      <SkiaProxy.Canvas style={StyleSheet.absoluteFill}>
++        {children}
++        <SkiaProxy.Image x={0} y={0} width={width} height={height} fit={resizeMode} image={texture} />
++      </SkiaProxy.Canvas>
++    </View>
+   )
+ }
+ 
